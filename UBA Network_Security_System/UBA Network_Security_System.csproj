@@ -173,9 +173,19 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\AccountStatement.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\BaseEntity.cs" />
+    <Compile Include="Models\AccountType.cs" />
+    <Compile Include="Models\Deposit.cs" />
+    <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\TransactionLedger.cs" />
+    <Compile Include="Models\Log.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Withdrawal.cs" />
+    <Compile Include="Models\Transfer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

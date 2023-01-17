@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -16,6 +17,10 @@ namespace UBA_Network_Security_System.Models
             // Add custom user claims here
             return userIdentity;
         }
+
+
+        public virtual ICollection<Account> Accounts { get; set; }
+        public virtual Employee Employee { get; set; }
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -29,5 +34,14 @@ namespace UBA_Network_Security_System.Models
         {
             return new ApplicationDbContext();
         }
+
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Transfer> Transfers { get; set; }
+        public DbSet<TransactionLedger> TransactionLedgers { get; set; }
+        public DbSet<Deposit> Deposits { get; set; }
+        public DbSet<Withdrawal> Withdrawals { get; set; }
+        public DbSet<AccountStatement> AccountStatements { get; set; }
+        public DbSet<Log> Logs { get; set; } 
     }
 }
