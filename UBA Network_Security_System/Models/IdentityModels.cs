@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -17,7 +19,6 @@ namespace UBA_Network_Security_System.Models
             // Add custom user claims here
             return userIdentity;
         }
-
 
         public virtual ICollection<Account> Accounts { get; set; }
         public virtual Employee Employee { get; set; }
@@ -42,6 +43,7 @@ namespace UBA_Network_Security_System.Models
         public DbSet<Deposit> Deposits { get; set; }
         public DbSet<Withdrawal> Withdrawals { get; set; }
         public DbSet<AccountStatement> AccountStatements { get; set; }
-        public DbSet<Log> Logs { get; set; } 
+        public DbSet<Log> Logs { get; set; }
+        public DbSet<BVNBank> BVNBanks { get; set; }
     }
 }

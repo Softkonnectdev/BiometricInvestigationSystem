@@ -34,7 +34,7 @@ namespace UBA_Network_Security_System.Models
     }
 
 
-    public class Utilities 
+    public class UtilityHelpers 
     {
         public IEnumerable<AccountType> AccountTypeList()
         {

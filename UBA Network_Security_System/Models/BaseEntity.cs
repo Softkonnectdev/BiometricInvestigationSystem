@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using UBA_Network_Security_System.Models.Utility;
 
 namespace UBA_Network_Security_System.Models
 {
@@ -12,15 +9,19 @@ namespace UBA_Network_Security_System.Models
         [Key] 
         public string Id { get; set; }
         [Display(Name = "Creaeted Date")]
-        public string CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
 
         public BaseEntity()
         {
-            var dateTime = DateTime.Now.ToString();
-            //var dateTime = DateTime.Now.ToString().Replace("/", "");
+            //var dateTime = DateTime.Now.ToString();
+            var dateTime = DateTime.Now;
             //dateTime.Replace(":", "");
 
-            this.Id = Guid.NewGuid().ToString();
+            Utilities util = new Utilities();
+            var _id = util.RandomDigits(15);
+
+            //this.Id = Guid.NewGuid().ToString();
+            this.Id = _id;
             //this.CreatedAt = DateTime.Now.ToString("d");
             this.CreatedAt = dateTime;
         }
