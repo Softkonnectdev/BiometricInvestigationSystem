@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "RoleAssignment";
+}
+
+<div class="bucket">
+
+    <div class="row">
+        <div class="col">
+            <section class="ftco-section">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-7 col-lg-7">
+                            <div class="login-wrap">
+                                <div class="img" style="background-image: url(/Images/GrantAccess.png);"></div>
+                                <h3 class="text-center mb-4">User Role Assignment</h3>
+                                @using (Html.BeginForm("RoleAssignment", "Role", FormMethod.Post))
+                                {
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="form-group mb-3">
+                                        @Html.DropDownList("userId", ViewBag.userId as SelectList, "Select User Email Address", new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        @Html.DropDownList("role", ViewBag.RoleId as SelectList, "Select Role", new { @class = "form-control" })
+                                    </div>
+
+                                    <div class="d-grid gap-2 col-md-12 mx-auto my-5">
+                                        <input class="btn btn-primary submit fw-bold px-3 fw-bolder" type="submit" id="btnSave"
+                                               value="Assign & Save" />
+                                    </div>
+                                    <div style="text-align: center;" id="loaderDiv1">
+                                        <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                                    </div>
+                                }
+
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+
+@if (ViewBag.Msg != null)
+{
+    <p id="msg" style="display:none">@ViewBag.Msg</p>
+}
+
+
+<script src=" https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $("#loaderDiv1").hide();
+
+        var Smsg = $("#msg").text();
+        if (Smsg.trim() != "") {
+            alert(Smsg);
+        }
+
+        $("#btnSave").click(function () {
+            $("#loaderDiv1").show();
+
+        });
+    })
+
+</script>
+

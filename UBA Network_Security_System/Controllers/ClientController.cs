@@ -278,7 +278,7 @@ namespace UBA_Network_Security_System.Controllers
             return RedirectToAction("Dashboard", msg);
         }
 
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "Admin")]
         public JsonResult DeleteAccount(string ID)
         {
 
@@ -296,7 +296,7 @@ namespace UBA_Network_Security_System.Controllers
             return Json(result, JsonRequestBehavior.AllowGet);
         }
 
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "Admin")]
         public JsonResult SuspendAccount(string ID)
         {
 

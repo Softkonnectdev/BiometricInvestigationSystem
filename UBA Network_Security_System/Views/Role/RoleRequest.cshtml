@@ -1,0 +1,71 @@
+﻿
+@{
+    ViewBag.Title = "Role Request";
+}
+
+@if (ViewBag.Msg != null)
+{
+    <p id="msg" style="display:none">@ViewBag.Msg</p>
+}
+
+<div class="row">
+    <div class="col">
+        <section class="">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <div class="login-wrap">
+                            <div class="img" style="background-image: url(/Images/institution1.png);"></div>
+                            <h3 class="text-center mb-4">Memeber Role Request</h3>
+
+                            @using (Html.BeginForm("RoleRequest", "Role", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+
+                                <div class="form-group mb-3">
+                                    <p class="lead">User Email Address</p>
+                                    <input type="text" id="Email" name="Email" class="form-control" value="@ViewBag.Email" readonly="readonly" />
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    @Html.DropDownList("Name", new SelectList(ViewBag.Roles, "Name", "Name"), "Select Role to Assign", new { @class = "form-control" })
+                                </div>
+
+                                <div style="text-align: center;" id="loaderDiv1">
+                                    <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                                </div>
+
+                                <div class="d-grid gap-2 col-md-12 mx-auto">
+                                    <input class="btn btn-success" type="submit" id="btnAssign" value="Assign & Save" />
+                                </div>
+
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#loaderDiv1").hide();
+
+        var Smsg = $("#msg").text();
+        if (Smsg != "") {
+            alert(Smsg);
+        }
+
+        $("#btnAssign").click(function () {
+            $("#loaderDiv1").show();
+        });
+
+    })
+
+</script>

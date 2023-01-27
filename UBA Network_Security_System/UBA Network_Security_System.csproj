@@ -173,17 +173,10 @@
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\RoleController.cs" />
     <Compile Include="Controllers\TransactionController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301190043230_Initial.cs" />
-    <Compile Include="Migrations\202301190043230_Initial.Designer.cs">
-      <DependentUpon>202301190043230_Initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202301231840117_Controller1.cs" />
-    <Compile Include="Migrations\202301231840117_Controller1.Designer.cs">
-      <DependentUpon>202301231840117_Controller1.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
@@ -198,6 +191,7 @@
     <Compile Include="Models\TransactionLedger.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\UserRoleModel.cs" />
     <Compile Include="Models\Utility\BinaryToImage.cs" />
     <Compile Include="Models\Utility\GetDateHelper.cs" />
     <Compile Include="Models\Utility\UploadImageViewModel.cs" />
@@ -263,6 +257,11 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Role\Create.cshtml" />
+    <Content Include="Views\Role\Index.cshtml" />
+    <Content Include="Views\Role\RoleAssignment.cshtml" />
+    <Content Include="Views\Role\RoleRequest.cshtml" />
+    <Content Include="Views\Role\UserRoles.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -284,14 +283,6 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Migrations\202301190043230_Initial.resx">
-      <DependentUpon>202301190043230_Initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202301231840117_Controller1.resx">
-      <DependentUpon>202301231840117_Controller1.cs</DependentUpon>
-    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
