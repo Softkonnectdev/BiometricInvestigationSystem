@@ -222,6 +222,10 @@
     <Compile Include="Migrations\202302041159285_xyz.Designer.cs">
       <DependentUpon>202302041159285_xyz.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202302041638197_updateup.cs" />
+    <Compile Include="Migrations\202302041638197_updateup.Designer.cs">
+      <DependentUpon>202302041638197_updateup.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountStatement.cs" />
@@ -438,6 +442,9 @@
     <Content Include="Views\Transaction\Deposit.cshtml" />
     <Content Include="Views\Transaction\AddEditDeposit.cshtml" />
     <Content Include="Views\Transaction\NewDeposit.cshtml" />
+    <Content Include="Views\Transaction\AddEditWithdraw.cshtml" />
+    <Content Include="Views\Transaction\Withdraw.cshtml" />
+    <Content Include="Views\Transaction\NewWithdraw.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -490,6 +497,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202302041159285_xyz.resx">
       <DependentUpon>202302041159285_xyz.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302041638197_updateup.resx">
+      <DependentUpon>202302041638197_updateup.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

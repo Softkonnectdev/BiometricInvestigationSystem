@@ -9,6 +9,7 @@ namespace UBA_Network_Security_System.Models
 {
     public class Withdrawal : BaseEntity
     {
+        [ForeignKey("Account")]
         [Required(ErrorMessage = "Account Number is NULL")]
         [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Account Number")]
         [StringLength(10, ErrorMessage = "Not more than 10 characters!")]
@@ -56,12 +57,7 @@ namespace UBA_Network_Security_System.Models
             get; set;
         }
 
-        [Required(ErrorMessage = "Account ID is NULL")]
-        [ForeignKey("Account")]
-        public string AccountID
-        {
-            get; set;
-        }
+
 
 
         public virtual Account Account { get; set; }

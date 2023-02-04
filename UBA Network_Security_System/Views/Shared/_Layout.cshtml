@@ -126,7 +126,6 @@
                                     </li>
                                     <li><a class="dropdown-item" href="@Url.Action("BVN","BVN")">Customers BVN</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("Account","Client")">Customers Account</a></li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Transfer","Client")">Transfer</a></li>
                                     <li>
                                         <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
                                     </li>
@@ -148,18 +147,17 @@
                                     <li>
                                         <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
                                     </li>
-                                    <li><a class="dropdown-item" href="@Url.Action("Account","Transaction")">Accounts</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Account","Client")">Customers Account</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("Transfer","Transaction")">Transfer</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("Withdraw","Transaction")">Withdraw</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("Deposit","Transaction")">Deposit</a></li>
                                     <li><a class="dropdown-item" href="@Url.Action("NewDeposit","Transaction")">Deposit Now</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("NewWithdraw","Transaction")">Withdraw Now</a></li>
                                 </ul>
                             </li>
 
                         }
 
-                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index","Inec")"><i class="fa fa-industry p-2 text-warning"></i>Jobs</a></li>
-                       
                     </ul>
 
                     @Html.Partial("_LoginPartial")
@@ -192,7 +190,7 @@
                     <ul class="">
                         <li>  <h3 style="color:orange;" class="control-label">SITE MAP</h3></li>
                         <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                       
+
                         <li>@Html.ActionLink("About", "About", "Home")</li>
 
                     </ul>

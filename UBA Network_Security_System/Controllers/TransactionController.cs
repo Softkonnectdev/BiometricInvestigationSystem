@@ -17,138 +17,257 @@ namespace UBA_Network_Security_System.Controllers
             con = new ApplicationDbContext();
         }
 
-        #region      WITHDRAWAL CRUD
+
+        #region      WITHDRAW CRUD
+
+
 
         [HttpGet]
-        public ActionResult Withdrawal(string Msg)
+        public ActionResult Withdraw(string accountNumber = null)
         {
-
-            if (Msg != null)
+            if (TempData["accNo"] != null)
             {
-                ViewBag.Msg = Msg.ToString();
+                accountNumber = TempData["accNo"].ToString();
             }
 
+            ViewBag.CurrencyFmt = CultureInfo.CreateSpecificCulture("NG-NG");
+
+            string Msg = null;
+
+            if (TempData["Msg"] != null)
+            {
+                Msg += "\n" + TempData["Msg"].ToString();
+            }
+
+            List<Withdrawal> withdrawals = new List<Withdrawal>();
             try
             {
-                var allWithdrawal = con.Withdrawals.ToList();
-                if (allWithdrawal != null && allWithdrawal.Count > 0)
+                if (accountNumber == null)
                 {
-                    ViewBag.AllWithdrawals = allWithdrawal;
-                    ViewBag.Withdrawals = allWithdrawal.Count();
+                    Msg += "\n" + "Please provide customer account number on the box!";
+                    return View();
                 }
+                else
+                {
+                    var customerWithdrawals= con.Withdrawals.Where(x => x.AccountNumber == accountNumber).ToList();
+                    if (customerWithdrawals.Count > 0)
+                    {
+                        foreach (var csDep in customerWithdrawals)
+                        {
+                            withdrawals.Add(csDep);
+                        }
+                        ViewBag.Withdraws = withdrawals;
+                    }
+                    else
+                    {
+                        Msg += "\n" + "Sorry, No Candidate found with provided account number!";
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
-                ViewBag.Msg = ex.Message.ToString();
-                return View();
+                if (ex.InnerException != null)
+                    Msg += "\n" + "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    Msg += "\n" + "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
+
+            ViewBag.WithdrawCount = withdrawals.Count;
+            ViewBag.Msg = Msg;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult Withdrawal(Withdrawal model)
+        public ActionResult UpdateWithdraw(Withdrawal model)
         {
-            string msg = "";
+            string msg = null;
 
             if (ModelState.IsValid)
             {
-
-                var dbObj = con.Withdrawals.SingleOrDefault(o => o.Id == model.Id);
-
+                //GET THE RECORD
+                var rec = con.Withdrawals.FirstOrDefault(x => x.Id == model.Id);
                 var account = con.Accounts.FirstOrDefault(x => x.AccountNumber == model.AccountNumber
-                                                             && x.IsActive == true
-                                                             && x.SecurePass == model.SecurePass);
+                                                          && x.IsActive == true);
 
-
-                try
+                if (rec != null && account != null)
                 {
-                    var empOperatorEmail = User.Identity.Name;
-                    var empOperator = con.Users.FirstOrDefault(x => x.Email == empOperatorEmail);
-                    // JUST UPDATE
+                    //UPDATE
+                    decimal oldAmount = rec.Amount;
+                    account.Balance += oldAmount;
+                    //con.SaveChanges();
 
-                    if (account != null)
+                    //  CONFIRM THAT THE WITHDRAWING AMOUNT IS NOT GREATER THAN THE BALANCE
+                    if (model.Amount > account.Balance)
                     {
-                        if (dbObj != null)
+                        msg = "SORRY, TRANSACTION FAILED DUE TO INSUFFICIENT BALANCE!";
+                        TempData["accNo"] = model.AccountNumber;
+                        TempData["Msg"] = msg;
+                        return RedirectToAction("Withdraw");
+                    }
+
+                    rec.Amount = model.Amount;
+                    account.Balance -= model.Amount;
+
+                    int isSaved = con.SaveChanges();
+                    if (isSaved > 0)
+                    {
+                        //CREATE LEDGER HERE
+                        TransactionLedger transactionLedger = new TransactionLedger()
                         {
-                            decimal oldAmount = dbObj.Amount;
-                            account.Balance += oldAmount;
-                            //con.SaveChanges();
+                            TransactionType = "Withdrawal Update",
+                            TransactionId = rec.Id
+                        };
 
-                            dbObj.Amount = model.Amount;
-                            account.Balance -= model.Amount;
+                        con.TransactionLedgers.Add(transactionLedger);
 
-                            con.SaveChanges();
-
-                            msg = "Withdrawal record has been updated successfully!";
-                            dbObj.Remark = msg;
-                            con.SaveChanges();
-                        }
-                        else
-                        {
-                            // CREATE NEW RECORD
-
-                            Withdrawal objWithdrawal = new Withdrawal()
-                            {
-                                AccountName = account.SurName + " " +
-                                              account.MiddleName +
-                                              account.FirstName,
-
-                                AccountNumber = model.Account.AccountNumber,
-                                SecurePass = account.SecurePass,
-                                CashaierID = empOperator.Id,
-                                Amount = model.Amount
-                            };
-
-                            string id = objWithdrawal.Id;
-
-                            con.Withdrawals.Add(objWithdrawal);
-                            account.Balance -= model.Amount;
-
-                            int isSaved = con.SaveChanges();
-                            var dbObjx = con.Withdrawals.SingleOrDefault(o => o.Id == id);
-                            var dbObjAcc = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.AccountNumber && o.IsActive == true);
-
-                            if (isSaved > 0)
-                            {
-                                msg = "Withdrawal transaction has been completed successfully!";
-                                dbObjx.Remark = msg;
-
-                                dbObjx.Status = true;
-                                con.SaveChanges();
-                            }
-                            else
-                            {
-                                msg = "Withdrawal transaction was not completed successfully!";
-                                dbObjx.Remark = msg;
-                                dbObjx.Status = false;
-                                dbObjAcc.Balance += model.Amount;
-                                con.SaveChanges();
-                            }
-                        }
+                        rec.Status = true;
+                        msg = "Withdrawal record has been updated successfully!";
+                        rec.Remark = msg + "\n - Updated on " + DateTime.UtcNow;
+                        con.SaveChanges();
                     }
                     else
                     {
-                        msg = "Account does not exist anymore!";
+                        msg = "Withdrawal record was not updated successfully!";
                     }
                 }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null)
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
-                    else
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
-                }
             }
-            else
-            {
-                msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
-            }
-            return Json(msg, JsonRequestBehavior.AllowGet);
+            TempData["accNo"] = model.AccountNumber;
+            TempData["Msg"] = msg;
+            return RedirectToAction("Withdraw");
         }
 
-        [Authorize(Roles = "MD, BranchOfficer")]
-        public ActionResult AddEditWithdrawal(string transactionID)
+        [HttpGet]
+        public ActionResult NewWithdraw()
+        {
+            if (TempData["Msg"] != null)
+            {
+                ViewBag.Msg = TempData["Msg"].ToString();
+            }
+
+            if (TempData["Model"] != null)
+            {
+                return View((Withdrawal)TempData["Model"]);
+            }
+
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Withdraw(Withdrawal model)
+        {
+            string msg = "";
+
+
+            var account = con.Accounts.FirstOrDefault(x => x.AccountNumber == model.AccountNumber
+                                                         && x.IsActive == true);
+
+
+            try
+            {
+                // JUST UPDATE
+
+                if (account != null)
+                {
+
+                    // CREATE NEW RECORD
+                    var accOperator = User.Identity.Name;
+
+                    Withdrawal objDeposit = new Withdrawal()
+                    {
+                        AccountName = account.SurName + " " +
+                                      account.MiddleName +
+                                      account.FirstName,
+
+                        AccountNumber = model.AccountNumber,
+                        SecurePass = model.SecurePass,
+                        CashaierID = con.Users.FirstOrDefault(x => x.Email == accOperator).Id,
+                        Amount = model.Amount,
+                        Status = false
+                    };
+
+                    string id = objDeposit.Id;
+
+                    //  CONFIRM THAT THE WITHDRAWING AMOUNT IS NOT GREATER THAN THE BALANCE
+                    if (model.Amount > account.Balance)
+                    {
+                        msg = "SORRY, TRANSACTION FAILED DUE TO INSUFFICIENT BALANCE!";
+                        TempData["accNo"] = model.AccountNumber;
+                        TempData["Msg"] = msg;
+                        TempData["Model"] = model;
+                        return RedirectToAction("NewWithdraw");
+                    }
+                    else if(account.SecurePass != model.SecurePass)
+                    {
+                        msg = "SORRY, AUTHENTICATION FAILED!";
+                        TempData["accNo"] = model.AccountNumber;
+                        TempData["Msg"] = msg;
+                        TempData["Model"] = model;
+                        return RedirectToAction("NewWithdraw");
+                    }
+
+                    account.Balance -= model.Amount;
+
+                    msg = "Withdrawal transaction has been completed successfully!";
+
+                    //var dbObjx = con.Deposits.SingleOrDefault(o => o.Id == id);
+                    var dbObjAcc = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.AccountNumber && o.IsActive == true);
+
+                    objDeposit.Remark = msg;
+                    if (msg.Contains("successfully"))
+                    {
+                        objDeposit.Status = true;
+
+                    }
+                    else
+                    {
+                        objDeposit.Status = false;
+                        dbObjAcc.Balance += model.Amount;
+
+
+                    }
+                    con.Entry(account).State = EntityState.Modified;
+                    con.Entry(objDeposit).State = EntityState.Added;
+                    //CREATE LEDGER HERE
+                    TransactionLedger transactionLedger = new TransactionLedger()
+                    {
+                        TransactionType = "Created Withdrawal",
+                        TransactionId = objDeposit.Id
+                    };
+
+                    con.TransactionLedgers.Add(transactionLedger);
+                    con.SaveChanges();
+
+                    TempData["Msg"] = msg;
+                    return RedirectToAction("NewWithdraw");
+
+                }
+                else
+                {
+                    TempData["Msg"] = "Account does not exist anymore!";
+                    return RedirectToAction("NewWithdraw");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
+            }
+
+            TempData["Msg"] = msg;
+            return RedirectToAction("NewWithdraw");
+
+        }
+
+        [Authorize(Roles = "Admin")]
+        public ActionResult AddEditWithdraw(string transactionID)
         {
             string msg = "";
 
@@ -161,28 +280,33 @@ namespace UBA_Network_Security_System.Controllers
                     var obj = con.Withdrawals.SingleOrDefault(o => o.Id == transactionID);
                     if (obj != null)
                     {
-                        model.Id = obj.Id;
                         model.AccountName = obj.AccountName;
-                        model.AccountID = obj.AccountID;
                         model.AccountNumber = obj.AccountNumber;
                         model.Amount = obj.Amount;
                         model.Remark = obj.Remark;
                         model.Status = obj.Status;
+                        model.Id = obj.Id;
                         model.SecurePass = obj.SecurePass;
+                        model.CashaierID = obj.CashaierID;
+                        model.CreatedAt = obj.CreatedAt;
                     }
+                    return PartialView("AddEditWithdraw", model);
+
                 }
             }
             catch (Exception ex)
             {
-                msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN!";
-                Session["grmsg"] = msg;
-                return RedirectToAction("Dashboard", msg);
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
-            return PartialView("AddEditWithdrawal", model);
+            TempData["Msg"] = msg;
+            return RedirectToAction("Withdraw");
         }
 
         #endregion  -    END OF WITHDRAWAL
-
+             
         #region      DEPOSIT CRUD
 
 
