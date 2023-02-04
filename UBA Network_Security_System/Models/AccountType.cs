@@ -12,6 +12,13 @@ namespace UBA_Network_Security_System.Models
         
     }
 
+    public class _Gender
+    {
+        public string Name { get; set; }
+
+    }
+
+
     public class MaritalStatus
     {
         public int ID { get; set; }
@@ -144,7 +151,20 @@ namespace UBA_Network_Security_System.Models
             };
         }
 
-
+        public IEnumerable<_Gender> GetGenders()
+        {
+            return new List<_Gender>()
+            {
+                new _Gender()
+                {
+                    Name = "Male"
+                },
+                new _Gender()
+                {
+                    Name = "Female"
+                }
+            };
+        }
     }
 
 }

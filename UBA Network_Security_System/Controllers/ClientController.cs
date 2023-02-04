@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using UBA_Network_Security_System.Models.Utility;
 
 namespace UBA_Network_Security_System.Controllers
 {
+    [Authorize(Roles = "Admin, Accountant")]
     public class ClientController : Controller
     {
 
@@ -23,6 +25,7 @@ namespace UBA_Network_Security_System.Controllers
 
         public ClientController()
         {
+            con = new ApplicationDbContext();
         }
 
         public ClientController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
@@ -63,38 +66,79 @@ namespace UBA_Network_Security_System.Controllers
 
         #region      Account CRUD
 
-        [HttpGet]
-        public ActionResult Account(string Msg)
+     
+        public ActionResult Account(string AccountNumber = null)
         {
+            string msg = "";
+            string Msg = null;
+            ViewBag.CurrencyFmt = CultureInfo.CreateSpecificCulture("NG-NG");
 
-            if (Msg != null)
+            if (TempData["Msg"] != null)
             {
-                ViewBag.Msg = Msg.ToString();
+                Msg += "\n" + TempData["Msg"].ToString();
             }
 
+            List<Account> accounts = new List<Account>();
             try
             {
-                var user_email = User.Identity.Name;
-                var user = con.Users.FirstOrDefault(c => c.Email == user_email);
-                var myAccount = con.Accounts.FirstOrDefault(x => x.UserId == user.Id);
-                if (myAccount != null)
+                if (AccountNumber == null && !User.IsInRole("Admin"))
                 {
-                    ViewBag.MyAccount = myAccount;
+                    Msg += "\n" + "Please provide customer account number on the box!";
+                    return View();
                 }
+                else if (User.IsInRole("Admin"))
+                {
+                    var customerAccounts = con.Accounts.ToList();
+                    if (customerAccounts.Count > 0)
+                    {
+                        foreach (var bvn in customerAccounts)
+                        {
+                            accounts.Add(bvn);
+                        }
+                    }
+                    ViewBag.Accounts = accounts;
+                }
+                else
+                {
+                    var customerAccount = con.Accounts.FirstOrDefault(x => x.AccountNumber == AccountNumber);
+                    if (customerAccount != null)
+                    {
+                        accounts.Add(customerAccount);
+                        ViewBag.Accounts = accounts;
+                    }
+                    else
+                    {
+                        Msg += "\n" + "Sorry, No Candidate found with provided account number!";
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
-                ViewBag.Msg = Session["csmsg"].ToString() + " " + ex.Message.ToString();
-                return View();
+                if (ex.InnerException != null)
+                    Msg += "\n" + "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    Msg += "\n" + "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
+
+            ViewBag.AccountCount = accounts.Count;
+            ViewBag.Msg = Msg;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Account(Account model)
+        public JsonResult Account(Account model)
         {
             string msg = "";
+
+            var userEmail = User.Identity.Name;
+            
+                var user = con.Users.FirstOrDefault(x => x.Email == userEmail);
+
+                model.AccountManagerName = user.Email;
+            
 
             if (ModelState.IsValid)
             {
@@ -107,63 +151,31 @@ namespace UBA_Network_Security_System.Controllers
                     if (bvn != null)
                     {
 
-                        var chkUserExist = con.Users.FirstOrDefault(x => x.Email == model.Email);
-                        var chkAccountExist = con.Accounts.Where(x => x.Email == model.Email).ToList();
+                        var chkAccountExist = con.Accounts.FirstOrDefault(x => x.Email == model.Email &&
+                                                           x.AccountNumber == model.AccountNumber);
 
-                        if (chkUserExist == null && chkAccountExist == null)
+                        if (chkAccountExist == null)
                         {
-                            //  -   -   BOTH USER AND APPLICANTPROFILE DOES NOT EXIST
-                            var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                            var result = await UserManager.CreateAsync(user, model.Password);
-                            if (result.Succeeded)
-                            {
-                                model.FirstName = bvn.FirstName;
-                                model.MiddleName = bvn.MiddleName;
-                                model.SurName = bvn.SurName;
-                                model.DOB = bvn.DOB;
-                                model.Gender = bvn.Gender;
-                                model.AccountNumber = util.RandomDigits(10);
-                                model.UserId = user.Id;
-                                model.IsActive = true;
-                                con.Accounts.Add(model);
-                                con.SaveChanges();
-                                msg = "Account saved successfully";
-                                return RedirectToAction("Account", msg);
-                            }
-                            else
-                            {
-                                msg = "Sorry, User account could not be saved successfully!";
-                            }
-                            ViewBag.Msg = msg;
-                            return View(model);
-                        }
-                        else if (chkUserExist != null && chkAccountExist == null)
-                        {
-                            //  -   -   ONLY APPLICANTPROFILE IS CREATED
 
-                            model.FirstName = bvn.FirstName;
-                            model.MiddleName = bvn.MiddleName;
-                            model.SurName = bvn.SurName;
                             model.DOB = bvn.DOB;
                             model.Gender = bvn.Gender;
                             model.AccountNumber = util.RandomDigits(10);
-                            model.UserId = chkUserExist.Id;
                             model.IsActive = true;
+                            model.DOO = DateTime.UtcNow;
+
+
                             con.Accounts.Add(model);
                             con.SaveChanges();
                             msg = "Account saved successfully";
-                            return RedirectToAction("Account", msg);
-                        }
-                        else if (chkUserExist != null && chkAccountExist != null)
+                           }
+                        else
                         {
                             //EDIT
-                            var dbObj = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.AccountNumber && o.UserId == model.UserId);
+                            var dbObj = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.AccountNumber &&
+                                                                     o.Email == model.Email);
 
                             if (dbObj != null)
                             {
-                                dbObj.FirstName = bvn.FirstName;
-                                dbObj.MiddleName = bvn.MiddleName;
-                                dbObj.SurName = bvn.SurName;
                                 dbObj.DOB = bvn.DOB;
                                 dbObj.Gender = bvn.Gender;
                                 dbObj.DOO = model.DOO;
@@ -182,24 +194,20 @@ namespace UBA_Network_Security_System.Controllers
                                 dbObj.MaritalStatus = model.MaritalStatus;
                                 dbObj.SecurePass = model.SecurePass;
                                 dbObj.BranchOffice = model.BranchOffice;
-                                dbObj.IsActive = true;
 
                                 msg = "Account updated successfully!";
                                 con.SaveChanges();
-                                return RedirectToAction("Account", msg);
                             }
 
                             else
                             {
-                                msg = "No record found!";
-                                return RedirectToAction("Account", msg);
+                                msg = "No record found to modify!";
                             }
                         }
                     }
                     else
                     {
-                        ViewBag.Msg = "INVALID BANK VERIFICATION NUMBER!";
-                        return View(model);
+                        msg = "INVALID BANK VERIFICATION NUMBER!";
                     }
                 }
                 catch (Exception ex)
@@ -215,12 +223,11 @@ namespace UBA_Network_Security_System.Controllers
                 msg = "OOOPS, PLEASE PROVIDE ALL VALUES AND TRY AGAIN LATER!";
             }
 
-            //return Json(msg, JsonRequestBehavior.AllowGet);
-            return RedirectToAction("MyProfile", msg);
+            return Json(msg, JsonRequestBehavior.AllowGet);
         }
 
         [AllowAnonymous]
-        public ActionResult AddEditAccount(string ID)
+        public ActionResult AddEditAccount(string ID = null)
         {
             Account model = new Account();
             string msg = "";
@@ -228,16 +235,26 @@ namespace UBA_Network_Security_System.Controllers
             try
             {
 
-                if (ID != null)
+                if (ID != "")
                 {
-                    var obj = con.Accounts.SingleOrDefault(o => o.UserId == ID);
+                    var obj = con.Accounts.SingleOrDefault(o => o.AccountNumber == ID);
                     if (obj != null)
                     {
 
+                        model.AccountNumber = obj.AccountNumber;
                         model.Email = obj.Email;
+                        model.BVN = obj.BVN;
                         model.Phone = obj.Phone;
-
+                        model.LGA = obj.LGA;
+                        model.State = obj.State;
+                        model.FirstName = obj.FirstName;
+                        model.MiddleName = obj.MiddleName;
+                        model.SurName = obj.SurName;
+                        model.AccountManagerName = obj.AccountManagerName;
+                        model.DOO = obj.DOO;
+                        model.DOB = obj.DOB;
                         model.AccountTypeID = obj.AccountTypeID;
+                        model.ResidentialAddress = obj.ResidentialAddress;
                         model.ResidentialCountry = obj.ResidentialCountry;
                         model.PermanentResident = obj.PermanentResident;
                         model.AccountManagerName = obj.AccountManagerName;
@@ -250,19 +267,8 @@ namespace UBA_Network_Security_System.Controllers
                         model.MaritalStatus = obj.MaritalStatus;
                         model.SecurePass = obj.SecurePass;
                         model.BranchOffice = obj.BranchOffice;
-                        model.UserId = obj.UserId;
-
-                        //model.LGAOrigin = obj.LGAOrigin;
-                        //model.StateOrigin = obj.StateOrigin;
-                        //model.ResidentialCountry = obj.ResidentialCountry;
-                        //model.PermanentResident = obj.PermanentResident;
-                        //model.PreferredJobLocation = obj.PreferredJobLocation;
-                        //model.EmailNotification = obj.EmailNotification;
-                        //model.Nationality = obj.Nationality;
-                        //model.Skills = obj.Skills;
-                        //model.UserId = obj.UserId;
-
-                        return PartialView("AddEditAddEditAccount", model);
+                        model.Gender = obj.Gender;
+                        model.Occupation = obj.Occupation;
 
                     }
                     else
@@ -270,12 +276,26 @@ namespace UBA_Network_Security_System.Controllers
                         msg = "Record doesn't exist anymore!";
                     }
                 }
+
+                UtilityHelpers utilityHelpers = new UtilityHelpers();
+
+                ViewBag.AccountTypes = utilityHelpers.AccountTypeList();
+                ViewBag.IDType = utilityHelpers.IdentificationTypeList();
+                ViewBag.MaritalStatus = utilityHelpers.MaritalStatusList();
+                ViewBag.GenderList = utilityHelpers.GetGenders();
+
+                return PartialView("AddEditAccount", model);
+
             }
             catch (Exception ex)
             {
-                msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN!";
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
-            return RedirectToAction("Dashboard", msg);
+            TempData["Msg"] = msg;
+            return RedirectToAction("Index", "Home");
         }
 
         [Authorize(Roles = "Admin")]
@@ -285,7 +305,7 @@ namespace UBA_Network_Security_System.Controllers
             bool result = false;
             if (ID != null)
             {
-                var objDel = con.Accounts.SingleOrDefault(o => o.Id == ID);
+                var objDel = con.Accounts.SingleOrDefault(o => o.AccountNumber == ID);
                 if (objDel != null)
                 {
                     con.Accounts.Remove(objDel);
@@ -303,7 +323,7 @@ namespace UBA_Network_Security_System.Controllers
             bool result = false;
             if (ID != null)
             {
-                var objDel = con.Accounts.SingleOrDefault(o => o.Id == ID);
+                var objDel = con.Accounts.SingleOrDefault(o => o.AccountNumber == ID);
                 if (objDel != null)
                 {
                     objDel.IsActive = false;

@@ -3,39 +3,115 @@
     ViewBag.Title = "Register";
 }
 
-<h2>@ViewBag.Title.</h2>
 
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+@if (ViewBag.Msg != null)
 {
-    @Html.AntiForgeryToken()
-    <h4>Create a new account.</h4>
-    <hr />
-    @Html.ValidationSummary("", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
-        </div>
-    </div>
+    <p id="msg" style="display:none">@ViewBag.msg</p>
 }
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+
+
+<div class="bucket">
+
+
+    <div class="row">
+        <div class="col">
+            <section class="ftco-section">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-md-7 col-lg-7">
+                            <div class="login-wrap">
+                                <div class="img" style="background-image: url(/Images/UBA5.jpeg);"></div>
+                                <h3 class="text-center mb-4">Member Sign Up</h3>
+                                @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+                                {
+
+                                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                                    @Html.AntiForgeryToken()
+
+
+                                    <div class="form-group mb-3">
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "someone@mail.com", required = "required" })
+                                        @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                                    </div>
+
+
+                                    <div class="form-group mb-3">
+                                        @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control", placeholder = "Combination of [(@,#,$,+),(A-Za-z),(0-9)]", required = "required" } })
+                                        <span toggle="#Password" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                                        @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        @Html.EditorFor(model => model.ConfirmPassword, new { htmlAttributes = new { @class = "form-control", placeholder = "Confirm Password", id = "passwordConfirm-field", required = "required" } })
+                                        <span toggle="#passwordConfirm-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                                        @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                                    </div>
+
+                                    <div style="text-align: center;" id="loaderDiv1" class="pt-2">
+                                        <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                                    </div>
+
+                                    <div class="form-group">
+                                        <button type="submit" id="btnRegister" class="form-control btn btn-primary submit px-3">Continue</button>
+                                    </div>
+                                }
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src=" https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+        $("#loaderDiv1").hide();
+
+
+        $("#Password").tooltip({
+            trigger: 'manual'
+        });
+
+        $("#infoIcon").hover(function () {
+            $("#Password").tooltip('toggle');
+        })
+
+
+        var msg = $("#msg").text();
+
+        if (msg != null && msg != "") {
+            alert(msg);
+        }
+
+        $("#btnRegister").click(function () {
+
+            let email = $("#Email").val();
+            let pass = $("#Password").val();
+            let confirmPass = $("#passwordConfirm-field").val();
+
+            if (email != "" && pass != "" && confirmPass != "")
+                $("#loaderDiv1").show();
+
+
+        });
+    });
+</script>

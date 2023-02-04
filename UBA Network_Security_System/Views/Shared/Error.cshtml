@@ -4,6 +4,12 @@
     ViewBag.Title = "Error";
 }
 
-<h1 class="text-danger">Error.</h1>
-<h2 class="text-danger">An error occurred while processing your request.</h2>
-
+<div id="" style="background-color:white;" class="text-center">
+    <img src="~/Images/meditation.png" class="rounded mx-auto d-block" />
+    <h1 class="m-3 font-monospace">Something's wrong here.</h1>
+    <p class="p-5 h3 fw-bolder">
+        This is a<span class="text-danger"> 404</span> error, which means you&#39;ve clicked on a bad link or entered an invalid URL.
+        Maybe what you are looking for can be found at <a class="h3" href="@Url.Action("Index","Home")">esiwes.com.ng</a>
+        P.S. Bitly links are case sensitive.
+    </p>
+</div>

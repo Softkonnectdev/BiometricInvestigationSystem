@@ -47,14 +47,15 @@ namespace UBA_Network_Security_System.Models
         }
         [Required(ErrorMessage = "Phone is NULL")]
         [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Phone Number")]
-        [StringLength(11, ErrorMessage = "Not more than 11 characters!")]
+        [StringLength(11, ErrorMessage = "Phone Not more than 11 characters!")]
         public string Phone
         {
             get; set;
         }
         [Required(ErrorMessage = "DOB is NULL")]
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "dd-MM-yyyy", ApplyFormatInEditMode = true)]
         [Display(Name = "Date of Birth")]
+        [DataType(DataType.Date)]
         public DateTime DOB
         {
             get; set;

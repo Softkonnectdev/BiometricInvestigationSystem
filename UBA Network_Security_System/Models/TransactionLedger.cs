@@ -7,7 +7,7 @@ namespace UBA_Network_Security_System.Models
         [Required(ErrorMessage ="Transaction is NULL")]
         public string TransactionId { get; set; }
         [Required(ErrorMessage ="Event is NULL")]
-        public string AccountType { get; set; } 
+        public string TransactionType { get; set; } 
 
     }
 }

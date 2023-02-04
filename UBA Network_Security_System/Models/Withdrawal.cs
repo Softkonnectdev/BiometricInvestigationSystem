@@ -30,7 +30,7 @@ namespace UBA_Network_Security_System.Models
         }
 
         [Required(ErrorMessage = "Cashier is NULL!")]
-        [ForeignKey("Employee")]
+        [ForeignKey("User")]
         public string CashaierID
         {
             get; set;
@@ -65,6 +65,6 @@ namespace UBA_Network_Security_System.Models
 
 
         public virtual Account Account { get; set; }
-        public virtual Employee Employee { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

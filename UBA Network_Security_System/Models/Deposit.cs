@@ -17,7 +17,8 @@ namespace UBA_Network_Security_System.Models
         {
             get; set;
         }
-        [Required(ErrorMessage = "Account Name is NULL!")]
+      
+
         [Display(Name = "Account Name")]
         public string AccountName
         {
@@ -29,12 +30,12 @@ namespace UBA_Network_Security_System.Models
         {
             get; set;
         }
-        [Required(ErrorMessage = "Status is NULL!")]
-        public bool Status
+      
+        public bool? Status
         {
             get; set;
         }
-        [Required(ErrorMessage = "Remark is NULL!")]
+
         public string Remark
         {
             get; set;
@@ -52,20 +53,13 @@ namespace UBA_Network_Security_System.Models
             get; set;
         }
         [Required(ErrorMessage = "Cashier is NULL!")]
-        [ForeignKey("Employee")]
+        [ForeignKey("User")]
         public string CashaierID
         {
             get; set;
         }
 
-        [Required(ErrorMessage = "Account ID is NULL!")]
-        [ForeignKey("Account")]
-        public string AccountID
-        {
-            get; set;
-        }
-
-        public virtual Account Account { get; set; }
-        public virtual Employee Employee { get; set; }
+       
+        public virtual ApplicationUser User { get; set; }
     }
 }

@@ -1,0 +1,215 @@
+﻿.dropdown-submenu {
+    position: relative;
+}
+
+    .dropdown-submenu > .dropdown-menu {
+        top: 0;
+        left: 100%;
+        margin-top: -6px;
+        margin-left: -1px;
+        -webkit-border-radius: 0 6px 6px 6px;
+        -moz-border-radius: 0 6px 6px;
+        border-radius: 0 6px 6px 6px;
+    }
+
+    .dropdown-submenu:hover > .dropdown-menu {
+        display: block;
+    }
+
+    .dropdown-submenu > a:after {
+        display: block;
+        content: " ";
+        float: right;
+        width: 0;
+        height: 0;
+        border-color: transparent;
+        border-style: solid;
+        border-width: 5px 0 5px 5px;
+        border-left-color: #ccc;
+        margin-top: 5px;
+        margin-right: -10px;
+    }
+
+    .dropdown-submenu:hover > a:after {
+        border-left-color: #fff;
+    }
+
+    .dropdown-submenu.pull-left {
+        float: none;
+    }
+
+        .dropdown-submenu.pull-left > .dropdown-menu {
+            left: -100%;
+            margin-left: 10px;
+            -webkit-border-radius: 6px 0 6px 6px;
+            -moz-border-radius: 6px 0 6px 6px;
+            border-radius: 6px 0 6px 6px;
+        }
+
+
+
+#body {
+    margin-top: 50px;
+}
+
+body {
+    font-family: Cambria, Cochin, Georgia, Times, Times New Roman, serif;
+    background: url('../Images/webBackground2.jpg') no-repeat fixed;
+    background-size: cover;
+    font-size: 16px;
+}
+
+.form-control {
+    background-color: transparent;
+    border-top-style: hidden;
+    border-right-style: hidden;
+    border-left-style: hidden;
+    border-bottom-style: groove;
+    border-radius: 5px 5px;
+}
+
+.bucket {
+   /* background: #9053c7;
+    background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
+    background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
+    background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
+    background: linear-gradient(-135deg, #c850c0, #4158d0);*/
+}
+
+#bucket {
+    padding: 10px;
+    margin-top: 10px;
+    background-color: whitesmoke;
+    border-radius: 5px 5px;
+    box-shadow: rgba(0,0,0,1) 5px 5px;
+}
+
+#guideBucket {
+    padding: 2px 10px 5px 5px;
+    margin-top: 10px;
+    background-color: white;
+    border-radius: 10px 10px;
+    text-align: justify;
+}
+
+footer {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px 10px;
+    background-color: slategray;
+    font-size: 18px;
+    color: white;
+}
+
+thead {
+    background-color: greenyellow;
+    color: black;
+}
+
+th {
+    text-align: center;
+}
+
+td {
+    text-align: center;
+}
+
+tfoot {
+    background-color: darkblue;
+    color: white;
+    text-emphasis: filled;
+}
+
+
+
+#bucket {
+    border: 2px solid black;
+}
+
+footer ul li {
+    list-style: none;
+}
+
+footer ol li {
+    list-style: none;
+}
+
+footer a {
+    color: white;
+}
+
+footer p {
+    text-align: center;
+    font-size: 14px;
+    color: floralwhite;
+}
+
+/*CONTACT US FORM CSS*/
+.get_in_touch {
+    max-width: 800px;
+    margin: 50px auto;
+    position: relative;
+    box-shadow: 0 10px 30px 0px rgba(0.3,0,0,5);
+    /*box-shadow: rgba(0,0,0,3) 10px 10px;*/
+    padding: 30px;
+    background-color: white;
+}
+
+#title {
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 3px;
+    font-size: 2em;
+    line-height: 48px;
+    padding-bottom: 20px;
+    color: #5543ca;
+    background: linear-gradient(to right,#f4524d 0%, #5543ca 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+.contact-form .input-text:focus {
+    outline: none
+}
+
+    .contact-form .input-text:focus + .label,
+    .contact-form .input-text.not-empty + .label {
+        transform: translateY(-24px);
+    }
+
+label {
+    color: #5543ca;
+}
+
+.contact-form #label {
+    position: absolute;
+    left: 20px;
+    bottom: 25px;
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 400;
+    color: #5543ca;
+    cursor: text;
+    text-transform: capitalize;
+    transition: transform 0.2s ease-in-out;
+}
+
+.contact-form .form-field {
+    position: relative;
+    margin: 32px 0;
+    color: black;
+}
+
+.contact-form .submit-btn {
+    display: inline-block;
+    background-image: linear-gradient(125deg, #a72879, #064497);
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 16px;
+    padding: 8px 16px;
+    border: none;
+    width: 400px;
+    cursor: pointer;
+}

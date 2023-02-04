@@ -4,15 +4,19 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
+using UBA_Network_Security_System.Models.Utility;
 
 namespace UBA_Network_Security_System.Models
 {
-    public class Account : BaseEntity
+    public class Account
     {
-        //CUSTOMER PROFILE
-        [Required(ErrorMessage = "UserId is NULL")]
-        [ForeignKey("User")]
-        public string UserId { get; set; }
+        [Key]
+        [Required(ErrorMessage = "Account Number is NULL")]
+        [StringLength(10, ErrorMessage = "Not more than 10 characters!")]
+        public string AccountNumber
+        {
+            get; set;
+        }
 
         [Required(ErrorMessage = "Account Type is NULL")]
         [Display(Name = "Account Type")]
@@ -20,13 +24,8 @@ namespace UBA_Network_Security_System.Models
         {
             get; set;
         }
-        [Required(ErrorMessage = "Account Number is NULL")]
-        [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Account Number")]
-        [StringLength(10, ErrorMessage = "Not more than 10 characters!")]
-        public string AccountNumber
-        {
-            get; set;
-        }
+
+
 
 
         [Required(ErrorMessage = "Surname is NULL")]
@@ -36,13 +35,13 @@ namespace UBA_Network_Security_System.Models
             get; set;
         }
         [Required(ErrorMessage = "FirstName is NULL")]
-        [Display(Name ="First Name")]
+        [Display(Name = "First Name")]
         public string FirstName
         {
             get; set;
         }
         [Required(ErrorMessage = "MiddleName is NULL")]
-        [Display(Name ="Middle Name")]
+        [Display(Name = "Middle Name")]
         public string MiddleName
         {
             get; set;
@@ -54,21 +53,12 @@ namespace UBA_Network_Security_System.Models
             get; set;
         }
 
-        [Required(ErrorMessage = "Password is NULL")]
-        [DataType(DataType.Password)]
-        [NotMapped]
-        public string Password
-        {
-            get; set;
-        }
-
-        
         public byte[] Passport
         {
             get; set;
         }
 
-      
+
         [Required(ErrorMessage = "Phone is NULL")]
         [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Phone Number")]
         [StringLength(11, ErrorMessage = "Not more than 11 characters!")]
@@ -76,15 +66,19 @@ namespace UBA_Network_Security_System.Models
         {
             get; set;
         }
+
+
         [Required(ErrorMessage = "DOB is NULL")]
-        [DisplayFormat(DataFormatString ="{dd-MM-yyyy}", ApplyFormatInEditMode =true)]
-        [Display(Name ="Date of Birth")]
+        [DisplayFormat(DataFormatString = "dd-MM-yyyy", ApplyFormatInEditMode = true)]
+        [Display(Name = "Date of Birth")]
+        [DataType(DataType.Date)]
         public DateTime DOB
         {
             get; set;
         }
+
         [Required(ErrorMessage = "DOO is NULL")]
-        [DisplayFormat(DataFormatString = "{dd-MM-yyyy}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "dd-MM-yyyy", ApplyFormatInEditMode = true)]
         [Display(Name = "Date of Opening")]
         public DateTime DOO
         {
@@ -165,12 +159,12 @@ namespace UBA_Network_Security_System.Models
         {
             get; set;
         }
-       
+
         public byte[] Signature
         {
             get; set;
         }
-       
+
         [Required(ErrorMessage = "IsActive is NULL")]
         public bool IsActive
         {
@@ -207,12 +201,12 @@ namespace UBA_Network_Security_System.Models
 
         //GENERAL ACCOUNT INFO
         [Required(ErrorMessage = "Balance is NULL")]
-        [DataType(DataType.Currency, ErrorMessage ="Not valid currency value")]
+        [DataType(DataType.Currency, ErrorMessage = "Not valid currency value")]
         public decimal Balance
         {
             get; set;
         }
-        [Required(ErrorMessage = "Account ManagerName is NULL")]
+
         [Display(Name = "Account Manager")]
         public string AccountManagerName
         {
@@ -220,10 +214,27 @@ namespace UBA_Network_Security_System.Models
         }
 
 
-        public virtual ApplicationUser User { get; set; }
+
+
+
         public virtual BVNBank BVNBank { get; set; }
         public virtual ICollection<Transfer> Transfers { get; set; }
         public virtual ICollection<Deposit> Deposits { get; set; }
         public virtual ICollection<Withdrawal> Withdrawals { get; set; }
+
+
+
+
+        public Account()
+        {
+            var dateTime = DateTime.Now;
+            Utilities util = new Utilities();
+            var _accNo = util.RandomDigits(10);
+
+            this.AccountNumber = _accNo;
+
+        }
+
+
     }
 }

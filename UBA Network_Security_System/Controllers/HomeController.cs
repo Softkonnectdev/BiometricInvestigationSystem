@@ -10,8 +10,13 @@ namespace UBA_Network_Security_System.Controllers
     {
         public ActionResult Index()
         {
+            if (TempData["Msg"] != null)
+            {
+                ViewBag.Msg = TempData["Msg"].ToString();
+            }
             return View();
         }
+
 
         public ActionResult About()
         {

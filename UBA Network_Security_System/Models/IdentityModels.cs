@@ -20,8 +20,7 @@ namespace UBA_Network_Security_System.Models
             return userIdentity;
         }
 
-        public virtual ICollection<Account> Accounts { get; set; }
-        public virtual Employee Employee { get; set; }
+
     }
 
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -36,7 +35,7 @@ namespace UBA_Network_Security_System.Models
             return new ApplicationDbContext();
         }
 
-        public DbSet<Employee> Employees { get; set; }
+
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Transfer> Transfers { get; set; }
         public DbSet<TransactionLedger> TransactionLedgers { get; set; }

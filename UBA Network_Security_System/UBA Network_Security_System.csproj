@@ -178,6 +178,50 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202302020939435_modification.cs" />
+    <Compile Include="Migrations\202302020939435_modification.Designer.cs">
+      <DependentUpon>202302020939435_modification.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302031056291_update1.cs" />
+    <Compile Include="Migrations\202302031056291_update1.Designer.cs">
+      <DependentUpon>202302031056291_update1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302031139032_update2.cs" />
+    <Compile Include="Migrations\202302031139032_update2.Designer.cs">
+      <DependentUpon>202302031139032_update2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302031150431_update3.cs" />
+    <Compile Include="Migrations\202302031150431_update3.Designer.cs">
+      <DependentUpon>202302031150431_update3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302031202152_update4.cs" />
+    <Compile Include="Migrations\202302031202152_update4.Designer.cs">
+      <DependentUpon>202302031202152_update4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302031226509_update5.cs" />
+    <Compile Include="Migrations\202302031226509_update5.Designer.cs">
+      <DependentUpon>202302031226509_update5.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302040856071_updatexx.cs" />
+    <Compile Include="Migrations\202302040856071_updatexx.Designer.cs">
+      <DependentUpon>202302040856071_updatexx.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302040904236_updatexy.cs" />
+    <Compile Include="Migrations\202302040904236_updatexy.Designer.cs">
+      <DependentUpon>202302040904236_updatexy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302040904597_updatexyr.cs" />
+    <Compile Include="Migrations\202302040904597_updatexyr.Designer.cs">
+      <DependentUpon>202302040904597_updatexyr.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302040906026_updatexyru.cs" />
+    <Compile Include="Migrations\202302040906026_updatexyru.Designer.cs">
+      <DependentUpon>202302040906026_updatexyru.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302041159285_xyz.cs" />
+    <Compile Include="Migrations\202302041159285_xyz.Designer.cs">
+      <DependentUpon>202302041159285_xyz.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountStatement.cs" />
@@ -186,7 +230,6 @@
     <Compile Include="Models\AccountType.cs" />
     <Compile Include="Models\BVNBank.cs" />
     <Compile Include="Models\Deposit.cs" />
-    <Compile Include="Models\Employee.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\TransactionLedger.cs" />
     <Compile Include="Models\Log.cs" />
@@ -206,12 +249,130 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrapx.css" />
+    <Content Include="Content\Custom.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\main.css" />
+    <Content Include="Content\style.css" />
+    <Content Include="Content\util.css" />
     <Content Include="favicon.ico" />
+    <Content Include="fonts\font-awesome-4.7.0\css\font-awesome.css" />
+    <Content Include="fonts\font-awesome-4.7.0\css\font-awesome.min.css" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.svg" />
+    <Content Include="fonts\font-awesome-4.7.0\HELP-US-OUT.txt" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\montserrat\OFL.txt" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\accountLocked.png" />
+    <Content Include="Images\applicants.png" />
+    <Content Include="Images\bg.jpg" />
+    <Content Include="Images\esutlogo.png" />
+    <Content Include="Images\GrantAccess.png" />
+    <Content Include="Images\HowToImages\annualanalysis.gif" />
+    <Content Include="Images\img-01.png" />
+    <Content Include="Images\load.gif" />
+    <Content Include="Images\load2.gif" />
+    <Content Include="Images\loading.gif" />
+    <Content Include="Images\loadingx.gif" />
+    <Content Include="Images\loadxx.gif" />
+    <Content Include="Images\location_icon.png" />
+    <Content Include="Images\mail_icon.png" />
+    <Content Include="Images\meditation.png" />
+    <Content Include="Images\phone_icon.png" />
+    <Content Include="Images\Register.jpg" />
+    <Content Include="Images\SchoolRegistration.png" />
+    <Content Include="Images\searchJob.png" />
+    <Content Include="Images\SoftKonnectLogo3.png" />
+    <Content Include="Images\students.png" />
+    <Content Include="Images\SUG.jpg" />
+    <Content Include="Images\UBA-BANK1.jpg" />
+    <Content Include="Images\UBA.png" />
+    <Content Include="Images\UBA2.jpg" />
+    <Content Include="Images\UBA3.jpg" />
+    <Content Include="Images\UBA4.png" />
+    <Content Include="Images\UBA5.jpeg" />
+    <Content Include="Images\UBA6.jpg" />
+    <Content Include="Images\webBackground2.jpg" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Content\bootstrapx.css.map" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\font-awesome-4.7.0\fonts\FontAwesome.otf" />
+    <Content Include="fonts\font-awesome-4.7.0\less\animated.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\bordered-pulled.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\core.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\fixed-width.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\font-awesome.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\icons.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\larger.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\list.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\mixins.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\path.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\rotated-flipped.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\screen-reader.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\stacked.less" />
+    <Content Include="fonts\font-awesome-4.7.0\less\variables.less" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\font-awesome.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_animated.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_bordered-pulled.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_core.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_fixed-width.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_icons.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_larger.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_list.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_mixins.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_path.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_rotated-flipped.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_screen-reader.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_stacked.scss" />
+    <Content Include="fonts\font-awesome-4.7.0\scss\_variables.scss" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.woff2" />
+    <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="fonts\montserrat\Montserrat-Black.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-BlackItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Bold.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-BoldItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraBold.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraBoldItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraLight.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ExtraLightItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Italic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Light.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-LightItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Medium.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-MediumItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Regular.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-SemiBold.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-SemiBoldItalic.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-Thin.ttf" />
+    <Content Include="fonts\montserrat\Montserrat-ThinItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Black.ttf" />
+    <Content Include="fonts\poppins\Poppins-BlackItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Bold.ttf" />
+    <Content Include="fonts\poppins\Poppins-BoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraBold.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraBoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraLight.ttf" />
+    <Content Include="fonts\poppins\Poppins-ExtraLightItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Italic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Light.ttf" />
+    <Content Include="fonts\poppins\Poppins-LightItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Medium.ttf" />
+    <Content Include="fonts\poppins\Poppins-MediumItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Regular.ttf" />
+    <Content Include="fonts\poppins\Poppins-SemiBold.ttf" />
+    <Content Include="fonts\poppins\Poppins-SemiBoldItalic.ttf" />
+    <Content Include="fonts\poppins\Poppins-Thin.ttf" />
+    <Content Include="fonts\poppins\Poppins-ThinItalic.ttf" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -222,7 +383,15 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\main.js" />
+    <Content Include="Scripts\mainxyz.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="vendor\animate\animate.css" />
+    <Content Include="vendor\select2\select2.css" />
+    <Content Include="vendor\select2\select2.js" />
+    <Content Include="vendor\select2\select2.min.css" />
+    <Content Include="vendor\select2\select2.min.js" />
+    <Content Include="vendor\tilt\tilt.jquery.min.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -262,14 +431,18 @@
     <Content Include="Views\Role\RoleAssignment.cshtml" />
     <Content Include="Views\Role\RoleRequest.cshtml" />
     <Content Include="Views\Role\UserRoles.cshtml" />
+    <Content Include="Views\Client\Account.cshtml" />
+    <Content Include="Views\Client\AddEditAccount.cshtml" />
+    <Content Include="Views\Bvn\AddEditBVN.cshtml" />
+    <Content Include="Views\Bvn\BVN.cshtml" />
+    <Content Include="Views\Transaction\Deposit.cshtml" />
+    <Content Include="Views\Transaction\AddEditDeposit.cshtml" />
+    <Content Include="Views\Transaction\NewDeposit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Uploads\Account\Passports\" />
     <Folder Include="Uploads\Account\Signatures\" />
-    <Folder Include="Views\Bvn\" />
-    <Folder Include="Views\Client\" />
-    <Folder Include="Views\Transaction\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -283,6 +456,41 @@
     <None Include="packages.config" />
     <Content Include="Scripts\jquery-3.4.1.slim.min.map" />
     <Content Include="Scripts\jquery-3.4.1.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\202302020939435_modification.resx">
+      <DependentUpon>202302020939435_modification.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302031056291_update1.resx">
+      <DependentUpon>202302031056291_update1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302031139032_update2.resx">
+      <DependentUpon>202302031139032_update2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302031150431_update3.resx">
+      <DependentUpon>202302031150431_update3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302031202152_update4.resx">
+      <DependentUpon>202302031202152_update4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302031226509_update5.resx">
+      <DependentUpon>202302031226509_update5.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302040856071_updatexx.resx">
+      <DependentUpon>202302040856071_updatexx.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302040904236_updatexy.resx">
+      <DependentUpon>202302040904236_updatexy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302040904597_updatexyr.resx">
+      <DependentUpon>202302040904597_updatexyr.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302040906026_updatexyru.resx">
+      <DependentUpon>202302040906026_updatexyru.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302041159285_xyz.resx">
+      <DependentUpon>202302041159285_xyz.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

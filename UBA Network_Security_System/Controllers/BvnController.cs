@@ -4,9 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using UBA_Network_Security_System.Models;
+using UBA_Network_Security_System.Models.Utility;
 
 namespace UBA_Network_Security_System.Controllers
 {
+    [Authorize(Roles = "Admin,Accountant")]
     public class BvnController : Controller
     {
         private ApplicationDbContext con;
@@ -19,28 +21,64 @@ namespace UBA_Network_Security_System.Controllers
         #region      BVN CRUD
 
         [HttpGet]
-        public ActionResult BVN(string Msg)
+        public ActionResult BVN(string phone = null)
         {
+            string msg = "";
 
-            if (Msg != null)
+            if (TempData["Msg"] != null)
             {
-                ViewBag.Msg = Msg.ToString();
+                ViewBag.Msg = TempData["Msg"].ToString();
             }
 
+            List<BVNBank> bvns = new List<BVNBank>();
             try
             {
-                var allBVN = con.BVNBanks.ToList();
-                if (allBVN != null && allBVN.Count > 0)
+
+
+                if (phone == null && !User.IsInRole("Admin"))
                 {
-                    ViewBag.AllBVNs = allBVN;
-                    ViewBag.BVNs = allBVN.Count();
+                    ViewBag.Msg = "Please provide customer phone number on the box!";
+                    return View();
                 }
+                else if (User.IsInRole("Admin"))
+                {
+                    var customerBvns = con.BVNBanks.ToList();
+                    if (customerBvns.Count > 0)
+                    {
+                        foreach (var bvn in customerBvns)
+                        {
+                            bvns.Add(bvn);
+                        }
+                    }
+                    ViewBag.BVNs = bvns;
+                }
+                else
+                {
+                    var customerBvn = con.BVNBanks.FirstOrDefault(x => x.Phone == phone);
+                    if (customerBvn != null)
+                    {
+                        bvns.Add(customerBvn);
+                        ViewBag.BVNs = bvns;
+                    }
+                    else
+                    {
+                        ViewBag.Msg = "Sorry, No Candidate found with provided phone number!";
+                        return View();
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
-                ViewBag.msg = Session["csmsg"].ToString() + " " + ex.Message.ToString();
-                return View();
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
+
+            ViewBag.BVNCount = bvns.Count;
+            ViewBag.Msg = msg;
             return View();
         }
 
@@ -49,6 +87,12 @@ namespace UBA_Network_Security_System.Controllers
         public JsonResult BVN(BVNBank model)
         {
             string msg = "";
+            if (model.BVN == null)
+            {
+                var util = new Utilities();
+                var genbvn = util.RandomDigits(11);
+                model.BVN = genbvn;
+            }
 
             if (ModelState.IsValid && model.BVN != null)
             {
@@ -58,7 +102,7 @@ namespace UBA_Network_Security_System.Controllers
                 {
                     if (model.BVN != null && dbObj != null)
                     {
-                        // JUST UPDATE
+                        // JUST UPDATE - BVN Table
 
                         dbObj.FirstName = model.FirstName;
                         dbObj.MiddleName = model.MiddleName;
@@ -67,6 +111,20 @@ namespace UBA_Network_Security_System.Controllers
                         dbObj.Email = model.Email;
                         dbObj.Gender = model.Gender;
                         dbObj.Phone = model.Phone;
+
+                        //  CHECK IF THERE'S ACCOUNT WITH SAME BVN AND UPDATE IT
+
+                        var customerAccts = con.Accounts.Where(x => x.BVN == dbObj.BVN).ToList();
+                        if (customerAccts.Count > 0)
+                        {
+                            foreach (var acc in customerAccts)
+                            {                               
+                                acc.DOB= model.DOB;
+                                acc.Gender = model.Gender;
+                            }
+                        }
+
+
                         con.SaveChanges();
                         msg = "BVN record has been updated successfully!";
                     }
@@ -112,6 +170,11 @@ namespace UBA_Network_Security_System.Controllers
             string msg = "";
 
             BVNBank model = new BVNBank();
+
+            UtilityHelpers utilityHelpers = new UtilityHelpers();
+
+            ViewBag.GenderList = utilityHelpers.GetGenders();
+
             try
             {
                 if (bvn != null)
@@ -130,17 +193,22 @@ namespace UBA_Network_Security_System.Controllers
                         model.Gender = obj.Gender;
                     }
                 }
+                return PartialView("AddEditBVN", model);
+
             }
             catch (Exception ex)
             {
-                msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN!";
-                Session["grmsg"] = msg;
-                return RedirectToAction("Dashboard", msg);
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
+
+                TempData["Msg"] = msg;
+                return RedirectToAction("Index", "Home");
             }
-            return PartialView("AddEditBVN", model);
         }
 
-        [Authorize(Roles = "SuperAdmin")]
+        [Authorize(Roles = "Admin")]
         public JsonResult DeleteBVN(string bvn)
         {
 
