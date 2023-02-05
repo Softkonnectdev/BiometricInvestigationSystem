@@ -9,6 +9,7 @@ namespace UBA_Network_Security_System.Models
 {
     public class Transfer : BaseEntity
     {
+        [ForeignKey("Account")]
         [Required(ErrorMessage = "Account Number is NULL")]
         [DataType(DataType.PhoneNumber, ErrorMessage = "Invalid Account Number")]
         [StringLength(10, ErrorMessage = "Not more than 10 characters!")]
@@ -33,19 +34,19 @@ namespace UBA_Network_Security_System.Models
         {
             get; set;
         }
-       
+
         [Required(ErrorMessage = "Sender Phone is NULL!")]
         [Display(Name = "Phone Number")]
         public string SenderPhone
         {
             get; set;
         }
-        [Required(ErrorMessage = "Status is NULL!")]
-        public bool Status
+      
+        public bool? Status
         {
             get; set;
         }
-        [Required(ErrorMessage = "Remark is NULL!")]
+
         [Display(Name = "Account Number")]
         public string Remark
         {
@@ -54,6 +55,7 @@ namespace UBA_Network_Security_System.Models
         [Required(ErrorMessage = "Secure Pass is NULL")]
         [DataType(DataType.Password, ErrorMessage = "Invalid Secure Pass")]
         [StringLength(6, ErrorMessage = "Not more than 6 characters!")]
+       [NotMapped]
         public string SecurePass
         {
             get; set;
@@ -65,12 +67,6 @@ namespace UBA_Network_Security_System.Models
             get; set;
         }
 
-        [Required(ErrorMessage = "Account ID is NULL")]
-        [ForeignKey("Account")]
-        public string AccountID
-        {
-            get; set;
-        }
 
         [Required(ErrorMessage = "Cashier is NULL!")]
         [ForeignKey("User")]

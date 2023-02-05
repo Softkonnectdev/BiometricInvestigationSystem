@@ -226,6 +226,18 @@
     <Compile Include="Migrations\202302041638197_updateup.Designer.cs">
       <DependentUpon>202302041638197_updateup.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202302051800434_updateup001.cs" />
+    <Compile Include="Migrations\202302051800434_updateup001.Designer.cs">
+      <DependentUpon>202302051800434_updateup001.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302051813172_updateup002.cs" />
+    <Compile Include="Migrations\202302051813172_updateup002.Designer.cs">
+      <DependentUpon>202302051813172_updateup002.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202302051828195_updateup003.cs" />
+    <Compile Include="Migrations\202302051828195_updateup003.Designer.cs">
+      <DependentUpon>202302051828195_updateup003.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\AccountStatement.cs" />
@@ -445,6 +457,10 @@
     <Content Include="Views\Transaction\AddEditWithdraw.cshtml" />
     <Content Include="Views\Transaction\Withdraw.cshtml" />
     <Content Include="Views\Transaction\NewWithdraw.cshtml" />
+    <Content Include="Views\Transaction\Transfer.cshtml" />
+    <Content Include="Views\Transaction\NewTransfer.cshtml" />
+    <Content Include="Views\Transaction\AddEditTransfer.cshtml" />
+    <Content Include="Views\Transaction\Transactions.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -500,6 +516,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202302041638197_updateup.resx">
       <DependentUpon>202302041638197_updateup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302051800434_updateup001.resx">
+      <DependentUpon>202302051800434_updateup001.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302051813172_updateup002.resx">
+      <DependentUpon>202302051813172_updateup002.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202302051828195_updateup003.resx">
+      <DependentUpon>202302051828195_updateup003.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

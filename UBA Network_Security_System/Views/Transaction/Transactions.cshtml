@@ -1,0 +1,49 @@
+﻿@model IEnumerable<UBA_Network_Security_System.Models.TransactionLedger>
+
+@{
+    ViewBag.Title = "Transactions";
+}
+<div id="bucket">
+
+    <p class="lead m-2 fw-bolder" id="title">
+        Transaction Ledger
+    </p>
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date of Transaction</th>
+                    <th>Transaction Id</th>
+                    <th>Transaction Type</th>
+
+                </tr>
+            </thead>
+
+            <tbody class="table-group-divider">
+                @{ int i = 1;}
+                @foreach (var item in Model)
+                {
+                    var ItemCount = Model.Count();
+                    <tr id="row_@item.Id">
+                        <td>
+                            @if (i <= ItemCount)
+                            {
+                                @i
+                            }
+
+                        </td>
+
+                        <td>@item.CreatedAt.ToString("ddd/MMM/yyyy - HH:mm:ss")</td>
+                        <td>@item.TransactionId</td>
+                        <td>@item.TransactionType</td>
+
+
+                    </tr>
+                    i++;
+                }
+
+        </table>
+    </div>
+</div>
+<br />

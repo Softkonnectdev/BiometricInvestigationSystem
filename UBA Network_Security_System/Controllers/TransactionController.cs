@@ -9,6 +9,7 @@ using UBA_Network_Security_System.Models;
 
 namespace UBA_Network_Security_System.Controllers
 {
+    [Authorize(Roles ="Admin, Accountant")]
     public class TransactionController : Controller
     {
         private ApplicationDbContext con;
@@ -49,18 +50,18 @@ namespace UBA_Network_Security_System.Controllers
                 }
                 else
                 {
-                    var customerWithdrawals= con.Withdrawals.Where(x => x.AccountNumber == accountNumber).ToList();
+                    var customerWithdrawals = con.Withdrawals.Where(x => x.AccountNumber == accountNumber).ToList();
                     if (customerWithdrawals.Count > 0)
                     {
                         foreach (var csDep in customerWithdrawals)
                         {
                             withdrawals.Add(csDep);
                         }
-                        ViewBag.Withdraws = withdrawals;
+                        ViewBag.Withdraws =  withdrawals.OrderBy(x => x.CreatedAt).ToList();
                     }
                     else
                     {
-                        Msg += "\n" + "Sorry, No Candidate found with provided account number!";
+                        Msg += "\n" + "Sorry, No transaction found with provided account number!";
                     }
                 }
 
@@ -201,7 +202,7 @@ namespace UBA_Network_Security_System.Controllers
                         TempData["Model"] = model;
                         return RedirectToAction("NewWithdraw");
                     }
-                    else if(account.SecurePass != model.SecurePass)
+                    else if (account.SecurePass != model.SecurePass)
                     {
                         msg = "SORRY, AUTHENTICATION FAILED!";
                         TempData["accNo"] = model.AccountNumber;
@@ -306,7 +307,7 @@ namespace UBA_Network_Security_System.Controllers
         }
 
         #endregion  -    END OF WITHDRAWAL
-             
+
         #region      DEPOSIT CRUD
 
 
@@ -345,11 +346,11 @@ namespace UBA_Network_Security_System.Controllers
                         {
                             deposits.Add(csDep);
                         }
-                        ViewBag.Deposits = deposits;
+                        ViewBag.Deposits = deposits.OrderBy(x => x.CreatedAt).ToList();
                     }
                     else
                     {
-                        Msg += "\n" + "Sorry, No Candidate found with provided account number!";
+                        Msg += "\n" + "Sorry, No transaction found with provided account number!";
                     }
                 }
 
@@ -565,185 +566,284 @@ namespace UBA_Network_Security_System.Controllers
 
         #endregion  -    END OF DEPOSIT
 
+
         #region      TRANSFER CRUD
 
-        [HttpGet]
-        public ActionResult Transfer(string Msg)
-        {
 
-            if (Msg != null)
+
+        [HttpGet]
+        public ActionResult Transfer(string rAccNumber = null, string sAccNumber = null)
+        {
+            if (TempData["rAccNo"] != null && TempData["sAccNo"] != null)
             {
-                ViewBag.Msg = Msg.ToString();
+                rAccNumber = TempData["raccNo"].ToString();
+                sAccNumber = TempData["sAccNo"].ToString();
             }
 
+            ViewBag.CurrencyFmt = CultureInfo.CreateSpecificCulture("NG-NG");
+
+            string Msg = null;
+
+            if (TempData["Msg"] != null)
+            {
+                Msg += "\n" + TempData["Msg"].ToString();
+            }
+
+            List<Transfer> transfers = new List<Transfer>();
             try
             {
-                var allTransfer = con.Transfers.ToList();
-                if (allTransfer != null && allTransfer.Count > 0)
+                if (rAccNumber == null && sAccNumber == null)
                 {
-                    ViewBag.AllTransfers = allTransfer;
-                    ViewBag.Transfers = allTransfer.Count();
+                    Msg += "\n" + "Please provide customers account number on the boxes!";
+                    return View();
                 }
+                else
+                {
+                    var customerTransfers = con.Transfers.Where(x => x.SenderAccountNumber == sAccNumber &&
+                                                          x.RecieverAccountNumber == rAccNumber).ToList();
+                    if (customerTransfers.Count > 0)
+                    {
+                        foreach (var csTrans in customerTransfers)
+                        {
+                            transfers.Add(csTrans);
+                        }
+                        ViewBag.Transfers = transfers.OrderBy(x => x.CreatedAt).ToList();
+                    }
+                    else
+                    {
+                        Msg += "\n" + "Sorry, No transaction found with provided account number!";
+                    }
+                }
+
+
             }
             catch (Exception ex)
             {
-                ViewBag.Msg = ex.Message.ToString();
-                return View();
+                if (ex.InnerException != null)
+                    Msg += "\n" + "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    Msg += "\n" + "TRY AGAIN LATER, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
+
+            ViewBag.TransferCount = transfers.Count;
+            ViewBag.Msg = Msg;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public JsonResult Transfer(Transfer model)
+        public ActionResult UpdateTransfer(Transfer model)
         {
-            string msg = "";
+            string msg = null;
 
             if (ModelState.IsValid)
             {
+                //GET THE RECORD
+                var rec = con.Transfers.FirstOrDefault(x => x.Id == model.Id);
+                var accountR = con.Accounts.FirstOrDefault(x => x.AccountNumber == model.RecieverAccountNumber
+                                                          && x.IsActive == true);
 
+                var accountS = con.Accounts.FirstOrDefault(x => x.AccountNumber == model.SenderAccountNumber
+                                                          && x.IsActive == true);
 
-                try
+                if (rec != null && accountR != null && accountS != null)
                 {
-                    // CONTINUE FROM HERE BY VERIFYING THE ACCOUNT NUMBER
-                    // YOU WANT TO TRANSFER TO...
-                    var dbObj = con.Transfers.SingleOrDefault(o => o.Id == model.Id);
 
-                    var account = con.Accounts.FirstOrDefault(x => x.AccountNumber == model.SenderAccountNumber
-                                                                 && x.IsActive == true
-                                                                 && x.SecurePass == model.SecurePass);
+                    decimal oldAmount = rec.Amount;
+                    decimal recieverOldBalance = accountR.Balance;
+                    decimal senderOldBalance = accountS.Balance;
 
 
-                    var accOperator = User.Identity.Name;
-                    var empOperator = con.Users.FirstOrDefault(x => x.Email == accOperator);
+                    accountR.Balance -= oldAmount;
+                    accountS.Balance += oldAmount;
+                  
 
-                    if (account != null)
+                    rec.Amount = model.Amount;
+                    //DEBIT SENDER
+                    accountS.Balance -= model.Amount;
+
+                    //CREDIT RECIEVER
+                    accountR.Balance += model.Amount;
+
+                    //  CONFIRM THAT THE WITHDRAWING AMOUNT IS NOT GREATER THAN THE BALANCE
+                    if (model.Amount > accountS.Balance)
                     {
-
-                        var recieverAccount = con.Accounts.FirstOrDefault(rec => rec.AccountNumber == model.RecieverAccountNumber);
-
-                        if (recieverAccount != null)
-                        {
-                            if (dbObj != null)
-                            {
-
-                                decimal oldAmount = dbObj.Amount;
-                                decimal recieverOldBalance = recieverAccount.Balance;
-                                decimal senderOldBalance = account.Balance;
-
-
-                                recieverAccount.Balance -= oldAmount;
-                                account.Balance += oldAmount;
-                                //con.SaveChanges();
-
-                                dbObj.Amount = model.Amount;
-                                //DEBIT SENDER
-                                account.Balance -= model.Amount;
-
-                                //CREDIT RECIEVER
-                                recieverAccount.Balance += model.Amount;
-
-
-                                int isSaved = con.SaveChanges();
-                                if (isSaved > 0)
-                                {
-                                    dbObj.Status = true;
-                                    msg = "Transfer record has been updated successfully!";
-                                    dbObj.Remark = msg;
-                                    con.SaveChanges();
-                                }
-                                else
-                                {
-                                    dbObj.Status = false;
-                                    account.Balance += model.Amount;
-                                    recieverAccount.Balance -= model.Amount;
-                                    msg = "Transfer record was not updated successfully!";
-                                    dbObj.Remark = msg;
-                                    con.SaveChanges();
-                                }
-
-                            }
-                            else
-                            {
-                                // CREATE NEW RECORD
-
-                                Transfer objTranser = new Transfer()
-                                {
-                                    RecieverAccountName = recieverAccount.SurName + " " +
-                                                  recieverAccount.MiddleName +
-                                                  recieverAccount.FirstName,
-
-                                    RecieverAccountNumber = model.RecieverAccountNumber,
-                                    SenderAccountNumber = model.SenderAccountNumber,
-                                    SenderPhone = account.Phone,
-                                    SecurePass = account.SecurePass,
-                                    AccountID = account.AccountNumber,
-                                    CashaierID = con.Users.FirstOrDefault(x => x.Email == accOperator).Id,
-                                    Amount = model.Amount
-                                };
-
-                                string id = objTranser.Id;
-
-                                con.Transfers.Add(objTranser);
-                                account.Balance -= model.Amount;
-                                recieverAccount.Balance += model.Amount;
-
-                                int isSaved = con.SaveChanges();
-
-                                var dbObjx = con.Transfers.SingleOrDefault(o => o.Id == id);
-                                var dbObjAcc = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.SenderAccountNumber && o.IsActive == true);
-                                var dbObjRecAcc = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.RecieverAccountNumber && o.IsActive == true);
-
-
-                                if (isSaved > 0)
-                                {
-                                    dbObjx.Status = true;
-                                    msg = "Transfer record has been updated successfully!";
-                                    dbObj.Remark = msg;
-                                    con.SaveChanges();
-                                }
-                                else
-                                {
-                                    dbObj.Status = false;
-                                    account.Balance += model.Amount;
-                                    recieverAccount.Balance -= model.Amount;
-                                    msg = "Transfer record was not updated successfully!";
-                                    dbObj.Remark = msg;
-                                    con.SaveChanges();
-                                }
-
-                            }
-                        }
-                        else
-                        {
-                            msg = "Reciever Account does not exist anymore!";
-                        }
-
+                        msg = "SORRY, TRANSACTION FAILED DUE TO INSUFFICIENT BALANCE!";
+                        TempData["sAccNo"] = model.SenderAccountNumber;
+                        TempData["rAccNo"] = model.RecieverAccountNumber;
+                        TempData["Msg"] = msg;
+                        return RedirectToAction("Transfer");
                     }
-                    else
+
+                    int isSaved = con.SaveChanges();
+                    if (isSaved > 0)
                     {
-                        msg = "Account does not exist anymore!";
+
+                        //CREATE LEDGER HERE
+                        TransactionLedger transactionLedger = new TransactionLedger()
+                        {
+                            TransactionType = "Transfer Update",
+                            TransactionId = rec.Id
+                        };
+
+                        con.TransactionLedgers.Add(transactionLedger);
+
+                        rec.Status = true;
+                        msg = "Transfer record has been updated successfully!" + "\n" +
+                            "Recorde updated on " + DateTime.UtcNow.ToString();
+                        rec.Remark = msg;
+                        con.SaveChanges();
                     }
 
 
-
-                }
-                catch (Exception ex)
-                {
-                    if (ex.InnerException != null)
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
                     else
-                        msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
+                    {
+                        msg = "Withdrawal record was not updated successfully!";
+                    }
                 }
             }
-            else
-            {
-                msg = "OOOPS, PLEASE PROVIDE ALL VALUES!";
-            }
-            return Json(msg, JsonRequestBehavior.AllowGet);
+            TempData["rAccNo"] = model.RecieverAccountNumber;
+            TempData["sAccNo"] = model.SenderAccountNumber;
+            TempData["Msg"] = msg;
+            return RedirectToAction("Transfer");
         }
 
-        [Authorize(Roles = "MD, BranchOfficer")]
+        [HttpGet]
+        public ActionResult NewTransfer()
+        {
+            if (TempData["Msg"] != null)
+            {
+                ViewBag.Msg = TempData["Msg"].ToString();
+            }
+
+            if (TempData["Model"] != null)
+            {
+                return View((Transfer)TempData["Model"]);
+            }
+
+            return View();
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Transfer(Transfer model)
+        {
+            string msg = "";
+
+
+
+
+            try
+            {
+
+                //GET THE RECORD
+                var accountR = con.Accounts.FirstOrDefault(x => x.AccountNumber == model.RecieverAccountNumber
+                                                          && x.IsActive == true);
+
+                var accountS = con.Accounts.FirstOrDefault(x => x.AccountNumber == model.SenderAccountNumber
+                                                          && x.IsActive == true);
+
+                var accountant = User.Identity.Name;
+
+                // JUST UPDATE
+
+                if (accountR != null && accountS != null)
+                {
+
+                    //  CONFIRM THAT THE WITHDRAWING AMOUNT IS NOT GREATER THAN THE BALANCE
+                    if (model.Amount > accountS.Balance)
+                    {
+                        msg = "SORRY, TRANSACTION FAILED DUE TO INSUFFICIENT BALANCE!";
+                        TempData["sAccNo"] = model.SenderAccountNumber;
+                        TempData["rAccNo"] = model.RecieverAccountNumber;
+                        TempData["Msg"] = msg;
+                        TempData["Model"] = model;
+                        return RedirectToAction("NewTransfer");
+                    }
+                    else if (accountS.SecurePass != model.SecurePass)
+                    {
+                        msg = "SORRY, AUTHENTICATION FAILED!";
+                        TempData["sAccNo"] = model.SenderAccountNumber;
+                        TempData["rAccNo"] = model.RecieverAccountNumber;
+                        TempData["Msg"] = msg;
+                        TempData["Model"] = model;
+                        return RedirectToAction("NewTransfer");
+                    }
+
+                    // CREATE NEW RECORD
+
+                    Transfer objTranser = new Transfer()
+                    {
+                        RecieverAccountName = accountR.SurName + " " +
+                                      accountR.MiddleName +
+                                      accountR.FirstName,
+
+                        RecieverAccountNumber = model.RecieverAccountNumber,
+                        SenderAccountNumber = model.SenderAccountNumber,
+                        SenderPhone = accountS.Phone,
+                        SecurePass = accountS.SecurePass,
+                        CashaierID = con.Users.FirstOrDefault(x => x.Email == accountant).Id,
+                        Amount = model.Amount
+                    };
+
+                    string id = objTranser.Id;
+
+                    con.Transfers.Add(objTranser);
+                    accountS.Balance -= model.Amount;
+                    accountR.Balance += model.Amount;
+
+                    int isSaved = con.SaveChanges();
+
+                    var dbObjx = con.Transfers.SingleOrDefault(o => o.Id == id);
+                    var dbObjAcc = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.SenderAccountNumber && o.IsActive == true);
+                    var dbObjRecAcc = con.Accounts.SingleOrDefault(o => o.AccountNumber == model.RecieverAccountNumber && o.IsActive == true);
+
+
+                    if (isSaved > 0)
+                    {
+                        dbObjx.Status = true;
+                        msg = "Transfer record has been updated successfully!";
+                        dbObjx.Remark = msg;
+                        con.SaveChanges();
+
+
+                        //CREATE LEDGER HERE
+                        TransactionLedger transactionLedger = new TransactionLedger()
+                        {
+                            TransactionType = "Created Transfer",
+                            TransactionId = dbObjx.Id
+                        };
+
+                        con.TransactionLedgers.Add(transactionLedger);
+                        con.SaveChanges();
+
+                        TempData["Msg"] = msg;
+                        return RedirectToAction("NewTransfer");
+
+                    }
+                }
+                else
+                {
+                    TempData["Msg"] = "Please make sure both accounts are correct and try again later!";
+                    return RedirectToAction("NewTransfer");
+
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
+            }
+
+            TempData["Msg"] = msg;
+            return RedirectToAction("NewTransfer");
+
+        }
+
+        [Authorize(Roles = "Admin")]
         public ActionResult AddEditTransfer(string transactionID)
         {
             string msg = "";
@@ -767,19 +867,31 @@ namespace UBA_Network_Security_System.Controllers
                         model.Id = obj.Id;
                         model.Remark = obj.Remark;
                         model.Status = obj.Status;
-                        model.AccountID = obj.AccountID;
                     }
+                    return PartialView("AddEditTransfer", model);
+
                 }
             }
             catch (Exception ex)
             {
-                msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN!";
-                Session["grmsg"] = msg;
-                return RedirectToAction("Dashboard", msg);
+                if (ex.InnerException != null)
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.InnerException.Message.ToString();
+                else
+                    msg = "TRY AGAIN, IF PERSISTED, CONTACT ADMIN! \n" + ex.Message.ToString();
             }
-            return PartialView("AddEditTransfer", model);
+            TempData["Msg"] = msg;
+            return RedirectToAction("Transfer");
         }
 
         #endregion  -    END OF TRANSFER
+
+        #region     - ALL TRANSACTIONS
+        [Authorize(Roles ="Admin")]
+        public ActionResult Transactions()
+        {
+            return View(con.TransactionLedgers.OrderBy(x => x.CreatedAt).ToList());
+        }
+        #endregion  - END OF ALL TRANSACTIONS
+
     }
 }

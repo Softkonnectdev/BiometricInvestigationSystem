@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Deposit Transaction";
+    ViewBag.Title = "Transfer Transaction";
 }
 
 
@@ -11,7 +11,7 @@
         <p id="msg" style="display:none">@ViewBag.Msg</p>
     }
 
-    <h3 class="lead fs-3 mt-5" id="title">Deposit Record</h3>
+    <h3 class="lead fs-3 mt-5" id="title">Transfer Record</h3>
 
     <div class="row">
         <div class="col">
@@ -21,13 +21,17 @@
                         <div class="col-md-7 col-lg-7">
                             <div class="login-wrap">
                                 <div class="img" style="background-image: url(/Images/UBA6.jpg);"></div>
-                                <h3 class="text-center mb-4">Look Up Customers' Deposit</h3>
+                                <h3 class="text-center mb-4">Look Up Customers' Transfers</h3>
 
-                                @using (Html.BeginForm("Deposit", "Transaction", FormMethod.Get))
+                                @using (Html.BeginForm("Transfer", "Transaction", FormMethod.Get))
                                 {
 
                                     <div class="form-group mb-3">
-                                        @Html.Editor("accountNumber", new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Enter recipient account number" } })
+                                        @Html.Editor("sAccNumber", new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Enter your account number" } })
+                                    </div>
+
+                                    <div class="form-group mb-3">
+                                        @Html.Editor("rAccNumber", new { htmlAttributes = new { @class = "form-control", @required = "required", @placeholder = "Enter recipients' account number" } })
                                     </div>
 
                                     <div style="text-align: center;" id="loaderDivx" class="pt-2">
@@ -57,18 +61,19 @@
 
 
     @* TABLE BELLOW IS USED TO POPULATE ALL RECORD IN DB *@
-    @if (ViewBag.Deposits != null)
+    @if (ViewBag.Transfers != null)
     {
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Account Number</th>
+                        <th>Date of Transaction</th>
+                        <th>Debitor Account</th>
+                        <th>Beneficiary</th>
                         <th>Amount</th>
                         <th>Remark</th>
                         <th>Status</th>
-                        <th>Depositors</th>
 
                         @if (User.IsInRole("Admin"))
                         {
@@ -79,34 +84,35 @@
 
                 <tbody class="table-group-divider">
                     @{ int i = 1;}
-                    @foreach (var item in ViewBag.Deposits as List<UBA_Network_Security_System.Models.Deposit>)
+                    @foreach (var item in ViewBag.Transfers as List<UBA_Network_Security_System.Models.Transfer>)
                     {
-                        var ItemCount = ViewBag.DepositCount;
-                        <tr id="row_@item.Id">
-                            <td>
-                                @if (i <= ItemCount)
-                                {
-                                    @i
-                                }
-
-                            </td>
-
-                            <td>@item.AccountNumber</td>
-                            <td>@item.Amount.ToString("c", ViewBag.CurrencyFmt)</td>
-                            <td>@item.Remark</td>
-                            <td>@item.Status</td>
-                            <td>@item.DepositorName</td>
-
-                            @if (User.IsInRole("Admin"))
+                        var ItemCount = ViewBag.TransferCount;
+                    <tr id="row_@item.Id">
+                        <td>
+                            @if (i <= ItemCount)
                             {
-                                <td>
-                                    <div class="d-grid gap-2 col-md-12 mx-auto">
-                                        <a href="#" class="text-success" onclick="AddEdit('@item.Id')"><span class="fa fa-2x fa-pencil-square-o"></span> </a>
-
-                                    </div>
-                                </td>
+                                @i
                             }
-                        </tr>
+
+                        </td>
+
+                        <td>@item.CreatedAt.ToString("ddd/MMM/yyyy - HH:mm:ss")</td>
+                        <td>@item.RecieverAccountNumber</td>
+                        <td>@item.SenderAccountNumber</td>
+                        <td>@item.Amount.ToString("c", ViewBag.CurrencyFmt)</td>
+                        <td>@item.Remark</td>
+                        <td>@item.Status</td>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <td>
+                                <div class="d-grid gap-2 col-md-12 mx-auto">
+                                    <a href="#" class="text-success" onclick="AddEdit('@item.Id')"><span class="fa fa-2x fa-pencil-square-o"></span> </a>
+
+                                </div>
+                            </td>
+                        }
+                    </tr>
                         i++;
                     }
                 </tbody>
@@ -185,10 +191,10 @@
         }
 
         $("#btnReset").click(function () {
-            $("#AccountNumber").val("");
-            $("#Amount").val("");
+            $("#RecieverAccountNumber").val("");
+            $("#SenderAccountNumber").val("");
             $("#Remark").val("");
-            $("#Status").val("");
+            $("#Status").val(false);
         })
 
         $("#btnCancle").click(function () {
@@ -196,8 +202,9 @@
         })
 
         $("#btnSearch").click(function () {
-            var ph = $("#phone").val();
-            if (ph.trim() != "")
+            var sAcc = $("#sAccNumber").val();
+            var rAcc = $("#sAccNumber").val();
+            if (sAcc.trim() != "" && rAcc.trim() != "")
                 $("#loaderDivx").show();
 
         })
@@ -209,7 +216,7 @@
     var AddEdit = function (id) {
         $("#loaderDiv").show();
         debugger;
-        var url = "/Transaction/AddEditDeposit?transactionID=" + id; //USED TO SEARCH ENTITY WITH ID
+        var url = "/Transaction/AddEditTransfer?transactionID=" + id; //USED TO SEARCH ENTITY WITH ID
 
         $("#modalBody").load(url, function () {  // LOAD THE CONTENT FROM THE ACTION /ADDEDITRECORD
             $("#loaderDiv").hide();
@@ -218,37 +225,6 @@
     }
 
 
-
-    var ConfirmDeleteRecord = function (id) {
-        $("#ID").val(id);
-        $("#DeleteModal").modal("show");
-    }
-
-
-    var DeleteRecord = function () {
-
-        var Id = $("#ID").val();
-
-        $.ajax({
-
-            type: "POST",
-            url: "/Transaction/DeleteDeposit",
-            data: { bvn: Id },
-            success: function (result) {
-                if (result == true) {
-                    $("#row_" + Id).remove();
-                    alert("Record deleted successfully!");
-                    window.location.href = "/Home/Index";
-                }
-                else {
-                    alert("Operation failed!");
-                    window.location.href = "/Home/Index";
-                }
-            }
-        })
-
-
-    }
-
+  
 </script>
 

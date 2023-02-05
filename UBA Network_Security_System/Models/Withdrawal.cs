@@ -45,6 +45,7 @@ namespace UBA_Network_Security_System.Models
         [Required(ErrorMessage = "Secure Pass is NULL")]
         [DataType(DataType.Password, ErrorMessage = "Invalid Secure Pass")]
         [StringLength(6, ErrorMessage = "Not more than 6 characters!")]
+       [NotMapped]
         public string SecurePass
         {
             get; set;

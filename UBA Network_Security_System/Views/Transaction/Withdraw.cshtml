@@ -82,7 +82,7 @@
                     @foreach (var item in ViewBag.Withdraws as List<UBA_Network_Security_System.Models.Withdrawal>)
                     {
                         var ItemCount = ViewBag.WithdrawCount;
-                        <tr id="row_@item.AccountName">
+                        <tr id="row_@item.Id">
                             <td>
                                 @if (i <= ItemCount)
                                 {
