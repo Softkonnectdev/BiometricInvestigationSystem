@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewBag.Title = "Crime List";
+}
+
+
+<div id="bucket">
+
+    @if (ViewBag.Msg != null)
+    {
+        <p id="msg" style="display:none">@ViewBag.Msg</p>
+    }
+
+    <h3 class="lead fs-3 mt-5" id="title">Profile Crime List</h3>
+
+    <input type="button" class="btn btn-outline-primary fw-bold px-3 fw-bolder" onclick="AddEdit('')" value="New Crime" />
+
+    <br />
+    <br />
+
+
+
+
+
+
+    @* TABLE BELLOW IS USED TO POPULATE ALL RECORD IN DB *@
+    @if (ViewBag.Crimes != null)
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Defaulted law</th>
+                        <th>Type of Crime</th>
+                        <th>Address of Crime</th>
+                        <th>Tried</th>
+
+                        <th></th>
+
+                    </tr>
+                </thead>
+
+                <tbody class="table-group-divider">
+                    @{ int i = 1;}
+                    @foreach (var item in ViewBag.Crimes as List<CrimeInvestigationSystem.Models.Crime>)
+                    {
+                        var ItemCount = ViewBag.CrimeCount;
+                        <tr id="row_@item.Id">
+                            <td>
+                                @if (i <= ItemCount)
+                                {
+                                    @i
+                                }
+
+                            </td>
+
+                            <td>@item.DefaultedLaw</td>
+                            <td>@item.Type</td>
+                            <td>@item.AddressofCrime</td>
+                            <td>@item.Tried</td>
+
+                            <td>
+                                <div class="d-grid gap-2 col-md-12 mx-auto">
+
+                                    <a href="#" class="text-danger" onclick="ViewCrime('@item.Id')"><span class="fa fa-2x fa-eye"></span> </a>
+
+                                    <a href="#" class="text-success" onclick="AddEdit('@item.Id')"><span class="fa fa-2x fa-pencil-square-o"></span> </a>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    }
+
+
+
+    @* MODAL BELLOW IS USED  FOR NEW/EDIT RECORD *@
+    <div class="modal fade" id="AddEditModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body" id="modalBody">
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="row">
+                        <div class="col">
+
+                            <a href="#" class=" btn btn-outline-dark py-3 mx-md-2" id="btnReset">Reset</a>
+
+                            <a href="#" class="btn btn-outline-danger py-3 mx-md-2" id="btnCancle">Close</a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ViewModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body" id="viewModalBody">
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="row">
+                        <div class="col">
+
+                            <a href="#" class="btn btn-outline-danger py-3 mx-md-2" id="btnCancle1">Close</a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div> 
+
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $("#loaderDivx").hide();
+
+        var Smsg = $("#msg").text();
+        if (Smsg != "") {
+            alert(Smsg);
+        }
+
+        $("#btnReset").click(function () {
+            $("#FirstName").val("");
+            $("#SurName").val("");
+            $("#MiddleName").val("");
+            $("#Email").val("");
+            $("#Phone").val("");
+            $("#DOB").val("");
+            $("#Gender").val("");
+        })
+
+        $("#btnCancle").click(function () {
+            $("#AddEditModal").modal("hide");
+        })
+
+        $("#btnCancle1").click(function () {
+            $("#ViewModal").modal("hide");
+        })
+
+        $("#btnSearch").click(function () {
+            var ph = $("#phone").val();
+            if (ph.trim() != "")
+                $("#loaderDivx").show();
+
+        })
+
+
+    })
+
+
+    var AddEdit = function (id) {
+        $("#loaderDiv").show();
+        var url = "/Investigation/AddEditCrime?crimeId=" + id; //USED TO SEARCH ENTITY WITH ID
+
+        $("#modalBody").load(url, function () {  // LOAD THE CONTENT FROM THE ACTION /ADDEDITRECORD
+            $("#loaderDiv").hide();
+            $("#AddEditModal").modal("show");
+        })
+    }
+
+
+    var ViewCrime = function (id) {
+        $("#loaderDiv12").show();
+        var url = "/Investigation/ViewCrime?crimeId=" + id; //USED TO SEARCH ENTITY WITH ID
+
+        $("#viewModalBody").load(url, function () {  // LOAD THE CONTENT FROM THE ACTION /ADDEDITRECORD
+            $("#loaderDiv").hide();
+            $("#ViewModal").modal("show");
+        })
+    }
+
+    var ConfirmDeleteRecord = function (id) {
+        $("#ID").val(id);
+        $("#DeleteModal").modal("show");
+    }
+
+
+    var DeleteRecord = function () {
+
+        var Id = $("#ID").val();
+
+        $.ajax({
+
+            type: "POST",
+            url: "/Investigation/DeleteCrime",
+            data: { bvn: Id },
+            success: function (result) {
+                if (result == true) {
+                    $("#row_" + Id).remove();
+                    alert("Record deleted successfully!");
+                    window.location.href = "/Investigation/Crime";
+                }
+                else {
+                    alert("Operation failed!");
+                    window.location.href = "/Investigation/Crime";
+                }
+            }
+        })
+
+
+    }
+
+</script>
+

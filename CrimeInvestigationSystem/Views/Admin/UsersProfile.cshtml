@@ -1,0 +1,271 @@
+﻿
+@{
+    ViewBag.Title = "Profile Listing";
+}
+
+
+@if (ViewBag.Msg != null)
+{
+    <p id="msg" style="display:none">@ViewBag.Msg</p>
+}
+
+<div id="bucket" class="m-3">
+
+    <input type="button" class="btn btn-outline-primary fw-bold px-3 fw-bolder m-2" onclick="AddEdit('')" value="New Profile" />
+    <hr style="color:gray;" />
+
+    <br />
+
+    <p class="login100-form-title">Profile Listing</p>
+
+    @if (ViewBag.Profiles != null)
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Crime Count</th>
+                        <th>Photo</th>
+
+                        <th></th>
+
+                    </tr>
+                </thead>
+
+                <tbody class="table-group-divider">
+                    @{ int i = 1;}
+                    @foreach (var item in ViewBag.Profiles as List<CrimeInvestigationSystem.Models.Profile>)
+                    {
+                        var ItemCount = ViewBag.ProfileCount;
+                        <tr id="row_@item.ProfileId">
+
+                            <td>
+                                @if (i <= ItemCount)
+                                {
+                                    @i
+                                }
+
+                            </td>
+                            <td>@String.Format("{0} {1} {2}", item.SurName, item.FirstName, item.MiddleName) </td>
+                            <td>@item.Phone</td>
+                            <td>
+                                @if (item.Crimes.Count > 0)
+                                {
+                                    <a href="@Url.Action("Crime","Investigation", new {@profileId = item.ProfileId })" class="btn btn-primary">(@item.Crimes.Count) View</a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("Crime","Investigation", new {@profileId = item.ProfileId })" class="btn btn-primary">(@item.Crimes.Count) Add Crime</a>
+                                }
+                            </td>
+                            <td>
+                                @{
+                                    if (item.Passport != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(item.Passport);
+                                        var imgSrc = String.Format("data:image/png;base64,{0}", base64);
+                                        <img class="img-thumbnail" src="@imgSrc" width="50" height="50" alt="NO PASSPORT" />
+                                    }
+
+                                }
+
+                            </td>
+
+
+
+                            <td>
+                                <div class="d-grid gap-2 col-md-12 mx-auto">
+                                    <a href="#" class="text-danger" onclick="ViewProfile('@item.ProfileId')"><span class="fa fa-2x fa-eye"></span> </a>
+                                    <a href="#" class="text-success" onclick="AddEdit('@item.ProfileId')"><span class="fa fa-2x fa-pencil-square-o"></span> </a>
+
+                                </div>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+    }
+
+    @* MODAL BELLOW IS USED  FOR NEW/EDIT RECORD *@
+    <div class="modal fade" id="AddEditModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body" id="modalBody">
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="row">
+                        <div class="col">
+
+                            <a href="#" class=" btn btn-outline-dark py-3 mx-md-2" id="btnReset">Reset</a>
+
+                            <a href="#" class="btn btn-outline-danger py-3 mx-md-2" id="btnCancle">Close</a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ViewModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body" id="viewModalBody">
+
+                </div>
+                <div class="modal-footer">
+
+                    <div class="row">
+                        <div class="col">
+
+                            <a href="#" class="btn btn-outline-danger py-3 mx-md-2" id="btnCanclex">Close</a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="DeleteModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Delete Record</h1>
+                    <button type="button" class="btn-close text-bg-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <h2 class="text-center text-danger fs-3">ARE YOU SURE YOU WANT TO DELETE RECORD <span id="deleteId"></span>?</h2>
+                    <input type="hidden" id="ID" />
+                    <div class="d-grid gap-2 col-md-12 mx-auto">
+                        <input type="submit" id="btnDelete" onclick="DeleteRecord()" class="btn btn-danger" value="Yes Delete" />
+                    </div>
+                </div>
+
+
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+
+</div>
+
+
+@*<script src="~/Scripts/jquery-3.4.1.js"></script>*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        var Smsg = $("#msg").text();
+        if (Smsg.trim() != "") {
+            debugger;
+            alert(Smsg);
+        }
+
+        $("#loaderDivx").hide();
+
+        $("#loaderDiv1").hide();
+
+        $("#btnSearch").click(function () {
+            $("#loaderDiv1").show();
+        });
+
+
+        $("#btnReset").click(function () {
+            $("#Email").val("");
+            $("#Phone").val("");
+        })
+
+        $("#btnCancle").click(function () {
+            $("#AddEditModal").modal("hide");
+        })
+
+        $("#btnCanclex").click(function () {
+            $("#ViewModal").modal("hide");
+        })
+
+        //$("#btnSearch").click(function () {
+        //    var ph = $("#AccountNumber").val();
+        //    if (ph.trim() != "")
+        //        $("#loaderDivx").show();
+
+        //})
+
+    })
+
+    var AddEdit = function (id) {
+        $("#loaderDiv11").show();
+        var url = "/Admin/AddEditUserProfile?profileId=" + id; //USED TO SEARCH ENTITY WITH ID
+
+        $("#modalBody").load(url, function () {  // LOAD THE CONTENT FROM THE ACTION /ADDEDITRECORD
+            $("#loaderDiv").hide();
+            $("#AddEditModal").modal("show");
+        })
+    }
+
+
+
+    var ViewProfile = function (id) {
+        $("#loaderDiv12").show();
+        var url = "/Admin/ViewProfile?profileId=" + id; //USED TO SEARCH ENTITY WITH ID
+
+        $("#viewModalBody").load(url, function () {  // LOAD THE CONTENT FROM THE ACTION /ADDEDITRECORD
+            $("#loaderDiv").hide();
+            $("#ViewModal").modal("show");
+        })
+    }
+
+    var ConfirmDeleteRecord = function (id) {
+        $("#ID").val(id);
+        $("#DeleteModal").modal("show");
+    }
+
+
+    var DeleteRecord = function () {
+
+        var Id = $("#ID").val();
+
+        $.ajax({
+
+            type: "POST",
+            url: "/Client/DeleteAccount",
+            data: { ID: Id },
+            success: function (result) {
+                if (result == true) {
+                    $("#row_" + Id).remove();
+                    alert("Record deleted successfully!");
+                    window.location.href = "/Client/Account";
+                }
+                else {
+                    window.location.href = "/Client/Account";
+                }
+            }
+        })
+
+
+    }
+
+</script>

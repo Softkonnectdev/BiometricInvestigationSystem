@@ -1,0 +1,263 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!-- basic -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- mobile metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <!-- site metas -->
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>@ViewBag.Title - NPF Investigation System</title>
+    <link rel="icon" href="~/Images/policeLogo.png" type="image/gif" />
+
+    @* BOOTSTRAP 5 CDN *@
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.css.map">
+
+
+
+    @*<link href="~/Content/bootstrapx.css" rel="stylesheet" />
+        <link href="~/Content/bootstrapx.css.map" rel="stylesheet" />*@
+    <link href="~/Content/font-awesome.css" rel="stylesheet" />
+
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/animate/animate.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="stylesheet" type="text/css" href="~/Content/util.css">
+    <link rel="stylesheet" type="text/css" href="~/Content/main.css">
+    <!--===============================================================================================-->
+
+    <link href="~/Content/style.css" rel="stylesheet" />
+
+    <link href="~/Content/Custom.css" rel="stylesheet" />
+
+    <style>
+        a {
+            text-decoration: none;
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+
+
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" href="@Url.Action("Index","Home")">  <b class="lead">&nbsp; <i class="fa fa-arrow-circle-left"></i> &nbsp; NPF Biometric System</b></a></li>
+            </ul>
+            <div class="d-flex d-none d-sm-block text-light pe-4">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-power-off pe-2 text-danger"></i> Log off</a>
+                }
+                else
+                {
+                    <a class="nav-link" href="@Url.Action("Login","Account")"><i class="fa fa-user-circle-o pe-2 text-primary"></i> Log In</a>
+                }
+            </div>
+            <div class="offcanvas offcanvas-end text-bg-dark" style="border-left:4px solid whitesmoke;" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+
+                <div class="offcanvas-header">
+
+                    <h6 class="offcanvas-title ps-2" id="offcanvasDarkNavbarLabel">MENU</h6>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+
+
+                    @if (User.IsInRole("Student") && Session["stdPass"] != null)
+                    {
+                        string imgPath = Session["stdPass"].ToString();
+                        <img src="http://www.esiwes.com.ng/Uploads/Passports/@imgPath" style="border-radius: 50%; width: 100px; height:100px; margin-left:130px" class="img-thumbnail" />
+                    }
+                    else
+                    {
+                        <img src="~/Images/anonymous-User.png" width="60" height="60" style="border-radius: 50%; width: 100px; height: 100px; margin-left: 130px" class="img-thumbnail" />
+                    }
+                    <div class="row">
+                        <h6 class="text-center pt-2">Hi - @User.Identity.Name</h6>
+                    </div>
+
+                    <hr />
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+
+                            <a class="nav-link active" aria-current="page" href="@Url.Action("Index","Home")"><i class="fa fa-home fa-3x text-warning"></i></a>
+
+                        </li>
+
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Admin Manager
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+
+                                    <li class="dropdown-header fw-bolder p-2 mt-2 fw-bold ">Role Management</li>
+
+                                    <li>
+                                        <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
+                                    </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Index","Role")">Available Roles</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("Create","Role")">New Role</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("UserRoles","Role")">User in Role</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("RoleAssignment","Role")">Role Assignment</a></li>
+
+                                    <li class="dropdown-header fw-bolder p-2 mt-2 fw-bold ">App Manager</li>
+
+                                    <li>
+                                        <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
+                                    </li>
+                                    <li><a class="dropdown-item" href="@Url.Action("UsersProfile","Admin")">User Profile</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("UploadPassport","Admin")">Upload Passport</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("UploadFingerPrint","Admin")">Upload Finger Print</a></li>
+                                    <li><a class="dropdown-item" href="@Url.Action("ComparePrints","Investigation")">Compare Suspect Print</a></li>
+                                    <li>
+                                        <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#">Something else here</a></li>
+                                </ul>
+                            </li>
+
+                        }
+                        @if (User.IsInRole(""))
+                        {
+
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    My Dashboard
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-dark">
+                                    <li class="dropdown-header fw-bolder p-2 mt-2 fw-bold ">Customers Account</li>
+
+                                    <li>
+                                        <hr class="dropdown-header fw-bolder text-primary fw-bolder text-primary">
+                                    </li>
+                                     <li><a class="dropdown-item" href="@Url.Action("Transactions","Transaction")">Transactions Ledger</a></li>
+                                </ul>
+                            </li>
+
+                        }
+
+                    </ul>
+
+                    @Html.Partial("_LoginPartial")
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container" id="body">
+        <br />
+        <br />
+        <br />
+        @RenderBody()
+
+        <footer class="">
+            <div class="row">
+
+
+
+                    <section class="get_in_touch">
+
+                        <h1 id="title">
+                            Contact us now
+                        </h1>
+
+                        <div class="row contact-form">
+
+                            <form class="row ">
+
+                                <div class="form-field col-lg-12 mt-2">
+                                    <input type="email" class="form-control" id="Email" name="Email" placeholder="Email address" required>
+                                </div>
+
+                                <div class="form-field col-lg-12 mt-2">
+                                    <input type="text" class="form-control" id="Subject" name="Subject" placeholder="Subject" required>
+                                </div>
+
+                                <div class="form-field col-lg-12 mt-2">
+                                    <textarea id="Message" class="form-control" placeholder="Complain in details" name="Message" required></textarea>
+                                </div>
+
+                                <div class="d-grid gap-2 col-md-12 mx-auto mt-2">
+                                    <button class="btn btnSendMsg btn-danger" type="submit">Send</button>
+                                </div>
+
+                                <div style="text-align: center;" id="loaderDiv1x">
+                                    <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+
+            </div>
+            <p class="cpy">&copy; @DateTime.Now.Year - NPF BIOMETRIC SYSTEM</p>
+
+        </footer>
+    </div>
+
+    <script src=" https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/js/bootstrap.bundle.min.js" integrity="sha512-BOsvKbLb0dB1IVplOL9ptU1EYA+LuCKEluZWRUYG73hxqNBU85JBIBhPGwhQl7O633KtkjMv8lvxZcWP+N3V3w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <!--===============================================================================================-->
+    <script src="~/vendor/select2/select2.min.js"></script>
+    <!--===============================================================================================-->
+    <script src="~/vendor/tilt/tilt.jquery.min.js"></script>
+    <script src="~/Scripts/main.js"></script>
+    <script src="~/Scripts/mainxyz.js"></script>
+</body>
+</html>
+
+<script>
+
+    $(document).ready(function () {
+        $("#loaderDiv1x").hide();
+
+        $(".btnSendMsg").click(function () {
+
+            $("#loaderDiv1x").show();
+
+            var email = $("#Email").val();
+            var subject = $("#Subject").val();
+            var message = $("#Message").val();
+            debugger
+            if (email === "" || subject === "" || message === "") {
+                alert("Please, kindly check the filed you're leaving blank, fill all field!");
+                $("#loaderDiv1x").hide();
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "/Utility/CreateTicket",
+                    data: { Email: email, Subject: subject, Message: message },
+                    success: function (result) {
+                        $("#loaderDiv1x").hide();
+                        if (result.trim != "" || result.trim != null) { alert(result); }
+                        window.location.href = "/Home/Index";
+                    }
+                })
+            }
+        })
+
+    })
+</script>
+
+

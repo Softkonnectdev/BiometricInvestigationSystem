@@ -1,0 +1,128 @@
+﻿
+
+@model CrimeInvestigationSystem.Models.Crime
+
+
+<p id="profileId" style="display:none">@ViewBag.profileID</p>
+
+
+
+<div class="row">
+    <div class="col">
+        <section class="ftco-section" style="padding-top:0px; padding-bottom: 2px;">
+            <div class="row justify-content-center">
+                <div class="login-wrap">
+                    <div class="img" style="background-image: url(/Images/CrimeFinger2.jpg);"></div>
+                    <h3 class="text-center mb-4">
+                        @if (Model.DefaultedLaw != null)
+                        {<span>Update Crime</span>}
+                        else
+                        { <span>Add New Crime</span>}
+                    </h3>
+
+                    @using (Html.BeginForm("Crime", "Investigation", FormMethod.Post, new
+                    { enctype = "multipart/form-data" }))
+                    {
+                        @*<form id="frmCrime" method="POST" enctype="multipart/form-data">*@
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.Id)
+                        @Html.HiddenFor(model => model.ProfileID)
+
+                        <div class="form-group mb-3">
+                            @Html.DropDownListFor(x => x.Type, new SelectList(ViewBag.CrimeTypeList, "Type", "Type"), "Select the type of crime committed", new { @class = "form-control", @required = "required" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.TextBoxFor(o => o.DefaultedLaw, new { @class = "form-control", @placeholder = "Defaulted law", @required = "required" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.TextBoxFor(o => o.AddressofCrime, new { @class = "form-control", @placeholder = "Where was the crime committed?", @required = "required" })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.EditorFor(o => o.CommittedDate, new { htmlAttributes = new { @class = "form-control", @placeholder = "Select Date it was committed", @required = "required" } })
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.PhotoUpload, htmlAttributes: new { @class = "control-label  " })
+                            <input type="file" id="PhotoUpload" name="PhotoUpload" class="form-control" required />
+                        </div>
+
+                        <div class="form-group mb-3">
+                            @Html.LabelFor(model => model.Tried, htmlAttributes: new { @class = "control-label" })
+
+                            <div class="checkbox">
+                                @Html.EditorFor(model => model.Tried)
+                                @Html.ValidationMessageFor(model => model.Tried, "", new { @class = "text-danger" })
+                            </div>
+
+                        </div>
+
+                        <div style="text-align: center;" id="loaderDiv1" class="pt-2">
+                            <img src="~/Images/loadingx.gif" width="80" height="80" class="img img-thumbnail" />
+                        </div>
+
+                        <div class="d-grid gap-2 col-md-12 mx-auto mt-2">
+                            @*<a href="#" class="btn btn-primary submit fw-bold px-3 fw-bolder" id="btnSaveUpdate">
+                                @if (Model.DefaultedLaw != null)
+                                {<span>Update Crime</span>}
+                                else
+                                { <span>Save New Crime</span>}
+                            </a>*@
+                            <button class="btn btn-primary submit fw-bold px-3 fw-bolder">
+                                @if (Model.DefaultedLaw != null)
+                                {<span>Update Crime</span>}
+                                else
+                                { <span>Save New Crime</span>}
+                            </button>
+                        </div>
+
+
+
+                        @*</form>*@
+                    }
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+
+
+
+
+<script>
+
+    $(document).ready(function () {
+        $("#loaderDiv1").hide();
+
+        $("#btnSaveUpdate").click(function () {
+
+            $("#loaderDiv1").show();
+
+            var frmData = $("#frmCrime").serialize();
+            var data = frmData;
+            debugger;
+
+            $.ajax({
+                type: "POST",
+                url: "/Investigation/Crime",
+                data: data,
+                success: function (result) {
+
+                    $("#loaderDiv").hide();
+                    $("#AddEditModal").modal("hide"); //TO HIDE MODAL AFTER SAVING RECORD
+                    if (result.Message.trim != "" || result.Message.trim != null) {
+                        alert(result.Message);
+                    }
+                    window.location.href = "/Investigation/Crime?profileId=" + result.Profileid;
+                }
+            })
+        })
+
+    })
+</script>
+
+
