@@ -46,13 +46,16 @@ namespace CrimeInvestigationSystem.Controllers
                 var crimes = con.Crimes.Where(x => x.ProfileID == profileId).ToList();
                 if (crimes.Count > 0)
                 {
+                    msg = "Add new Record";
                     ViewBag.Crimes = crimes;
                     ViewBag.CrimeCount = crimes.Count;
                     TempData["profileID"] = profileId;
                 }
                 else
+                {
+                    TempData["profileID"] = profileId;
                     msg = "Add new Record";
-
+                }
             }
             catch (Exception ex)
             {
@@ -97,7 +100,7 @@ namespace CrimeInvestigationSystem.Controllers
                     //};
                     //return Json(jsonRMsg, JsonRequestBehavior.AllowGet);
                     TempData["Msg"] = msg;
-                    return RedirectToAction("Crime",new { profileId = model.ProfileID });
+                    return RedirectToAction("Crime", new { profileId = model.ProfileID });
                 }
                 else if (model.PhotoUpload != null &&
                          model.PhotoUpload.ContentLength > 0 &&
@@ -181,7 +184,7 @@ namespace CrimeInvestigationSystem.Controllers
                 {
                     // CREATE NEW RECORD
 
-                     model = new Crime()
+                    model = new Crime()
                     {
                         DefaultedLaw = model.DefaultedLaw,
                         CommittedDate = model.CommittedDate,
@@ -225,8 +228,12 @@ namespace CrimeInvestigationSystem.Controllers
         public ActionResult AddEditCrime(string crimeId)
         {
             string msg = "";
-            string profileID = TempData["profileID"].ToString();
+            string profileID = "";
 
+            if (TempData["profileID"] != null)
+            {
+                profileID = TempData["profileID"].ToString();
+            }
 
             try
             {

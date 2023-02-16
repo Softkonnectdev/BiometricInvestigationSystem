@@ -7,13 +7,13 @@ namespace CrimeInvestigationSystem.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.2.0-61023")]
-    public sealed partial class addedPhoto2 : IMigrationMetadata
+    public sealed partial class initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(addedPhoto2));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "202302100927142_addedPhoto2"; }
+            get { return "202302160934552_initial"; }
         }
         
         string IMigrationMetadata.Source

@@ -1,6 +1,5 @@
 namespace CrimeInvestigationSystem.Migrations
 {
-    using CrimeInvestigationSystem.Models;
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Migrations;
@@ -13,7 +12,7 @@ namespace CrimeInvestigationSystem.Migrations
             AutomaticMigrationsEnabled = false;
         }
 
-        protected override void Seed(ApplicationDbContext context)
+        protected override void Seed(CrimeInvestigationSystem.Models.ApplicationDbContext context)
         {
             //  This method will be called after migrating to the latest version.
 

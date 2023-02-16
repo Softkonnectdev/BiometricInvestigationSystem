@@ -177,33 +177,9 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202302071302269_initial.cs" />
-    <Compile Include="Migrations\202302071302269_initial.Designer.cs">
-      <DependentUpon>202302071302269_initial.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202302081307298_updatev.cs" />
-    <Compile Include="Migrations\202302081307298_updatev.Designer.cs">
-      <DependentUpon>202302081307298_updatev.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202302081349058_updatebv.cs" />
-    <Compile Include="Migrations\202302081349058_updatebv.Designer.cs">
-      <DependentUpon>202302081349058_updatebv.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202302091036324_up.cs" />
-    <Compile Include="Migrations\202302091036324_up.Designer.cs">
-      <DependentUpon>202302091036324_up.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202302091043579_tot.cs" />
-    <Compile Include="Migrations\202302091043579_tot.Designer.cs">
-      <DependentUpon>202302091043579_tot.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202302100743251_addedPhoto.cs" />
-    <Compile Include="Migrations\202302100743251_addedPhoto.Designer.cs">
-      <DependentUpon>202302100743251_addedPhoto.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\202302100927142_addedPhoto2.cs" />
-    <Compile Include="Migrations\202302100927142_addedPhoto2.Designer.cs">
-      <DependentUpon>202302100927142_addedPhoto2.cs</DependentUpon>
+    <Compile Include="Migrations\202302160934552_initial.cs" />
+    <Compile Include="Migrations\202302160934552_initial.Designer.cs">
+      <DependentUpon>202302160934552_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\jsonReturningMessage.cs" />
@@ -350,6 +326,8 @@
     <Content Include="fonts\poppins\Poppins-SemiBoldItalic.ttf" />
     <Content Include="fonts\poppins\Poppins-Thin.ttf" />
     <Content Include="fonts\poppins\Poppins-ThinItalic.ttf" />
+    <None Include="Properties\PublishProfiles\adabiometric-001-site1 - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\adabiometric-001-site1 - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
@@ -437,26 +415,8 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202302071302269_initial.resx">
-      <DependentUpon>202302071302269_initial.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202302081307298_updatev.resx">
-      <DependentUpon>202302081307298_updatev.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202302081349058_updatebv.resx">
-      <DependentUpon>202302081349058_updatebv.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202302091036324_up.resx">
-      <DependentUpon>202302091036324_up.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202302091043579_tot.resx">
-      <DependentUpon>202302091043579_tot.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202302100743251_addedPhoto.resx">
-      <DependentUpon>202302100743251_addedPhoto.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202302100927142_addedPhoto2.resx">
-      <DependentUpon>202302100927142_addedPhoto2.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\202302160934552_initial.resx">
+      <DependentUpon>202302160934552_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

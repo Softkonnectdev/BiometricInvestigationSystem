@@ -17,6 +17,7 @@ namespace CrimeInvestigationSystem.Migrations
                         AddressofCrime = c.String(nullable: false),
                         DefaultedLaw = c.String(nullable: false),
                         CommittedDate = c.DateTime(nullable: false),
+                        Photo = c.Binary(),
                         ProfileID = c.String(nullable: false, maxLength: 10),
                         CreatedAt = c.DateTime(nullable: false),
                     })
@@ -34,8 +35,8 @@ namespace CrimeInvestigationSystem.Migrations
                         MiddleName = c.String(nullable: false),
                         Email = c.String(nullable: false),
                         Passport = c.Binary(),
-                        lThumb = c.String(nullable: false),
-                        rThumb = c.String(nullable: false),
+                        LeftThumb = c.String(),
+                        RightThumb = c.String(),
                         Phone = c.String(nullable: false, maxLength: 11),
                         DOB = c.DateTime(nullable: false),
                         CreatedOn = c.DateTime(nullable: false),
